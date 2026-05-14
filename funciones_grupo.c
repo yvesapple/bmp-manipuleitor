@@ -7,7 +7,7 @@ int procesar_imagen (int argc, char* argv[])
     char* bmpEncontrados[MAX_BMP] = {NULL, NULL};
     int cantBMP = encontrarImagenes(argv, bmpEncontrados);
 
-    if(!cantBMP || cantBMP > MAX_BMP)
+    if(!cantBMP)
         return ERROR_ARGUMENTOS;
 
     bool bmpValidos = true;
@@ -58,7 +58,7 @@ bool validar_bmp (const char * nombreArch)
         return false;
     }
 
-    int ancho, alto;
+    unsigned int ancho, alto;
     fseek(pf, 18, SEEK_SET);
     fread(&ancho, sizeof(int), 1, pf);
     fread(&alto, sizeof(int), 1, pf);
@@ -69,7 +69,7 @@ bool validar_bmp (const char * nombreArch)
         return false;
     }
 
-    short bits;
+    unsigned short bits;
     fseek(pf, 28, SEEK_SET);
     fread(&bits, sizeof(short), 1, pf);
 
@@ -79,7 +79,7 @@ bool validar_bmp (const char * nombreArch)
         return false;
     }
 
-    int compresion;
+    unsigned int compresion;
     fread(&compresion, sizeof(int), 1, pf);
 
     if(compresion != 0)
