@@ -41,9 +41,24 @@ int encontrarImagenes (char* argv[], char * bmpEncontrados[MAX_BMP]);
 *
 * @param nombreArch Ruta del archivo a validar.
 *
-* @return true Si cumple las 3 condiciones
+* @return true Si cumple las 4 condiciones
 * @return false Si no se puede abrir o no cumple alguna condicion.
 */
 bool validar_bmp (const char * nombreArch);
+
+/**
+* @brief Comprueba e imprime si el archivo es valido para procesar.
+*
+* @details Abre el archivo binario y verifica:
+* - Firma "BM"
+* - Profundidad de 24 bits
+* - Sin compresion
+*
+* @param nombreArch Ruta del archivo a validar.
+*
+* @return true Si cumple las 3 condiciones
+* @return false Si no se puede abrir o no cumple alguna condicion.
+*/
+bool comando_validar (const char * nombreArch);
 
 #endif // FUNCIONES_GRUPO_H_INCLUDED
