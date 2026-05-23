@@ -7,6 +7,7 @@
 #include <string.h>
 
 #define MAX_BMP 2
+#define BYTES_X_PIXEL 3
 
 typedef enum {
     EXITO = 0,
@@ -60,5 +61,5 @@ bool validar_bmp (const char * nombreArch);
 * @return false Si no se puede abrir o no cumple alguna condicion.
 */
 bool comando_validar (const char * nombreArch);
-
+bool mostrar_info (const char * nombreArch);
 #endif // FUNCIONES_GRUPO_H_INCLUDED
