@@ -18,6 +18,17 @@ typedef enum {
 
 } codigoRetorno;
 
+typedef struct {
+    unsigned int tamArchivo;
+    unsigned int offsetDatos;
+    unsigned int ancho;
+    unsigned int alto;
+    unsigned int compresion;
+    unsigned int tamImagen;
+    unsigned int padding;
+    unsigned short bits;
+    char firma[2];
+} t_header;
 
 int procesar_imagen (int argc, char* argv[]);
 
@@ -45,7 +56,7 @@ int encontrarImagenes (char* argv[], char * bmpEncontrados[MAX_BMP]);
 * @return true Si cumple las 4 condiciones
 * @return false Si no se puede abrir o no cumple alguna condicion.
 */
-bool validar_bmp (const char * nombreArch);
+bool validar_bmp (t_header * header);
 
 /**
 * @brief Comprueba e imprime si el archivo es valido para procesar.
@@ -60,6 +71,8 @@ bool validar_bmp (const char * nombreArch);
 * @return true Si cumple las 3 condiciones
 * @return false Si no se puede abrir o no cumple alguna condicion.
 */
-bool comando_validar (const char * nombreArch);
-bool mostrar_info (const char * nombreArch);
+bool cargar_header (const char * nombreArch, t_header * header);
+bool comando_validar (t_header * header);
+void mostrar_info (t_header * header);
+void mostrar_comandos ();
 #endif // FUNCIONES_GRUPO_H_INCLUDED
