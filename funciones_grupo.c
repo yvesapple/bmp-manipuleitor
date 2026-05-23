@@ -1,5 +1,3 @@
-
-
 #include "funciones_grupo.h"
 
 int procesar_imagen (int argc, char* argv[])
@@ -16,7 +14,18 @@ int procesar_imagen (int argc, char* argv[])
         else if(strcmp(argv[i], "--verbose") == 0)
             verbose = true;
     }
-    
+
+    if(verbose)
+    {
+        printf("[INFO] Iniciando bmpmanipuleitor...\n");
+        printf("[INFO] Argumentos detectados: ");
+        for(int i = 1; i < argc; i++)
+        {
+            printf("%s ", argv[i]);
+        }
+        printf("\n");
+    }
+
     char* bmpEncontrados[MAX_BMP] = {NULL, NULL};
     int cantBMP = encontrarImagenes(argv, bmpEncontrados);
 
@@ -185,6 +194,19 @@ void mostrar_info (t_header * header)
 
 void mostrar_comandos ()
 {
+    printf("BMPMANIPULEITOR - Manipulador de imágenes BMP 24 bits\n\n");
+    puts("GRUPO: DUALISMO");
+    puts("Integrantes:");
+    printf("\t1. 43.816.379 - AVALOS, Nahuel Agustin\n");
+    printf("\t1. 40.766.722	- CARO, Nicolas Dario\n");
+    printf("\t1. 40.239.700 - DEDO, Juan Pablo Lujan\n\n");
+
+    printf("Uso: bmpmanipuleitor.exe [OPCIONES]\n\n");
+    printf("EJEMPLOS:\n");
+    printf("\tbmpmanipuleitor.exe --negativo foto.bmp\n");
+    printf("\tbmpmanipuleitor.exe --info imagen.bmp --validar\n");
+    printf("\tbmpmanipuleitor.exe foto.bmp --verbose --escala-de-grises --aumentar-contraste=25\n\n");
+
     printf("Filtros basicos\n");
     printf("\t--negativo: Invertir colores\n");
     printf("\t--escala-de-grises: Convertir a escala de grises promediando RGB\n");
