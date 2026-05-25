@@ -6,8 +6,8 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define MAX_BMP 2
-#define BYTES_X_PIXEL 3
+#include "utilidades.h"
+#include "filtros_basicos.h"
 
 extern bool verbose;
 
@@ -21,16 +21,10 @@ typedef enum {
 } codigoRetorno;
 
 typedef struct {
-    unsigned int tamArchivo;
-    unsigned int offsetDatos;
-    unsigned int ancho;
-    unsigned int alto;
-    unsigned int compresion;
-    unsigned int tamImagen;
-    unsigned int padding;
-    unsigned short bits;
-    char firma[2];
-} t_header;
+    unsigned char b;
+    unsigned char g;
+    unsigned char r;
+} t_pixel;
 
 int procesar_imagen (int argc, char* argv[]);
 
@@ -60,31 +54,9 @@ int encontrarImagenes (char* argv[], char * bmpEncontrados[MAX_BMP]);
  */
 bool validar_bmp (t_header * header);
 
-/**
- * @brief Comprueba e imprime si el archivo es valido para procesar.
- *
- * @details Abre el archivo binario y verifica:
- * - Firma "BM"
- * - Profundidad de 24 bits
- * - Sin compresion
- *
- * @param header Estructura con la informacion del archivo.
- *
- * @return true Si cumple las 3 condiciones
- * @return false Si no se puede abrir o no cumple alguna condicion.
- */
-bool comando_validar (t_header * header);
+t_pixel** crearMatriz (int alto, int ancho);
 
-/**
- * @brief Carga la informacion de la imagen en una estructura.
- * 
- * @param nombreArch Ruta del archivo.
- * @param header Estructura a cargar.
- * 
- * @return true Si pudo cargar la informacion.
- * @return false Si no pudo abrir el archivo.
- */
-bool cargar_header (const char * nombreArch, t_header * header);
-void mostrar_info (t_header * header);
-void mostrar_comandos ();
+void liberarMatriz (t_pixel** mat, int filas);
+
+void guardarMatrizArchivo (t_pixel ** matriz, int filas, int col, int padding, FILE * pf);
 #endif // FUNCIONES_GRUPO_H_INCLUDED
