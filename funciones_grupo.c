@@ -1,9 +1,31 @@
-
-
 #include "funciones_grupo.h"
 
 int procesar_imagen (int argc, char* argv[])
 {
+    bool verbose = false;
+
+    for(int i = 1; i < argc; i++)
+    {
+        if(strcmp(argv[i], "--help") == 0)
+        {
+            mostrar_comandos();
+            return EXITO;
+        }
+        else if(strcmp(argv[i], "--verbose") == 0)
+            verbose = true;
+    }
+
+    if(verbose)
+    {
+        printf("[INFO] Iniciando bmpmanipuleitor...\n");
+        printf("[INFO] Argumentos detectados: ");
+        for(int i = 1; i < argc; i++)
+        {
+            printf("%s ", argv[i]);
+        }
+        printf("\n");
+    }
+
     char* bmpEncontrados[MAX_BMP] = {NULL, NULL};
     int cantBMP = encontrarImagenes(argv, bmpEncontrados);
 
@@ -12,34 +34,54 @@ int procesar_imagen (int argc, char* argv[])
 
     bool bmpValidos = true;
 
-    for(int i = 0; i < cantBMP; i++)
+    t_header header;
+
+    if(cantBMP == 2)
     {
-        if(!validar_bmp(bmpEncontrados[i]))
-            bmpValidos = false;
+        for(int i = 0; i < cantBMP; i++)
+        {
+            cargar_header(bmpEncontrados[i], &header);
+            if(!validar_bmp(&header))
+                bmpValidos = false;
+        }
+
+        if(!bmpValidos)
+            return ERROR_ARCHIVO;
+
+        // Concatenación horizontal
+        // Concatenación vertical
+
+        return EXITO;
     }
 
-    if(!bmpValidos)
-        return ERROR_ARCHIVO;
-
     int i = 1;      // argv[0] es el nombre del programa
-    int flagFunciones[20]= {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    int flagFunciones[18]= {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
     while(i < argc)
     {
         const char * opcion = argv[i];
+        cargar_header(bmpEncontrados[0], &header);
 
-        if((strcmp(opcion, bmpEncontrados[0]) != 0) && (bmpEncontrados[1] == NULL || strcmp(opcion, bmpEncontrados[1]) != 0))
+        if((strcmp(opcion, bmpEncontrados[0]) != 0))
         {
             if(strncmp(opcion, "--validar", strlen("--validar")) == 0 && flagFunciones[0] != 1)
             {
-                comando_validar(bmpEncontrados[0]);
+                printf("Validando %s...", bmpEncontrados[0]);
+                if(!comando_validar(&header))
+                    printf("ARCHIVO INVALIDO - No se puede procesar\n");
                 flagFunciones[0] = 1;
             }
 
             else if(strncmp(opcion, "--info", strlen("--info")) == 0 && flagFunciones[1] != 1)
             {
-                mostrar_info(bmpEncontrados[0]);
+                printf("Archivo: %s\n", bmpEncontrados[0]);
+                mostrar_info(&header);
                 flagFunciones[1] = 1;
+            }
+            
+            else if(strncmp(opcion, "--negativo", strlen("--negativo")) == 0 && flagFunciones[2] != 1)
+            {
+                // Completar
             }
         }
 
@@ -68,143 +110,70 @@ int encontrarImagenes (char* argv[], char * bmpEncontrados[MAX_BMP])
     return cantBmp;
 }
 
-bool validar_bmp (const char * nombreArch)
+bool validar_bmp (t_header * header)
 {
-    FILE * pf = fopen(nombreArch, "rb");
-    if(!pf)
+    if(header->firma[0] != 'B' || header->firma[1] != 'M')
         return false;
 
-    char firma[2];
-
-    fread(firma, sizeof(char), 2, pf);
-    if(firma[0] != 'B' || firma[1] != 'M')
-    {
-        fclose(pf);
+    if(header->ancho < 1 || header->alto < 1)
         return false;
-    }
 
-    unsigned int ancho, alto;
-    fseek(pf, 18, SEEK_SET);
-    fread(&ancho, sizeof(int), 1, pf);
-    fread(&alto, sizeof(int), 1, pf);
-
-    if(ancho < 1 || alto < 1)
-    {
-        fclose(pf);
+    if(header->bits != 24)
         return false;
-    }
 
-    unsigned short bits;
-    fseek(pf, 28, SEEK_SET);
-    fread(&bits, sizeof(short), 1, pf);
-
-    if(bits != 24)
-    {
-        fclose(pf);
+    if(header->compresion != 0)
         return false;
-    }
 
-    unsigned int compresion;
-    fread(&compresion, sizeof(int), 1, pf);
-
-    if(compresion != 0)
-    {
-        fclose(pf);
-        return false;
-    }
-
-    fclose(pf);
     return true;
 }
 
-bool comando_validar (const char * nombreArch)
+t_pixel** crearMatriz (int filas, int col)
 {
-    FILE * pf = fopen(nombreArch, "rb");
-    if(!pf)
-        return false;
-
-    printf("Validando %s...\n", nombreArch);
-
-    char firma[2];
-
-    fread(firma, sizeof(char), 2, pf);
-    if(firma[0] != 'B' || firma[1] != 'M')
+    t_pixel **matriz = malloc(filas * sizeof(t_pixel*));
+    if(!matriz)
     {
-        printf("Signature BMP invalido\n");
-        fclose(pf);
-        return false;
+        printf("Error al asignar memoria\n");
+        exit(ERROR_MEMORIA);
     }
 
-    printf("Signature BMP valido\n");
-
-    unsigned short bits;
-    fseek(pf, 28, SEEK_SET);
-    fread(&bits, sizeof(short), 1, pf);
-
-    if(bits != 24)
+    for(int i = 0; i < filas; i++)
     {
-        printf("ERROR: Profundidad de color incorrecta (%hu bits, esperado 24 bits\n)", bits);
-        fclose(pf);
-        return false;
+        matriz[i] = malloc(col * sizeof(t_pixel));
+
+        if(!matriz[i])
+        {
+            for(int j = 0; j < i; j++)
+            {
+                free(matriz[j]);
+            }
+            free(matriz);
+            printf("Error al asignar memoria\n");
+            exit(ERROR_MEMORIA);
+        }
     }
 
-    printf("Profundidad de 24 bits confirmada\n");
-
-    unsigned int compresion;
-    fread(&compresion, sizeof(int), 1, pf);
-
-    if(compresion != 0)
-    {
-        printf("Compresion: Comprimido\n");
-        fclose(pf);
-        return false;
-    }
-
-    printf("Compresion: No comprimido\n");
-
-    fclose(pf);
-    return true;
+    return matriz;
 }
 
-bool mostrar_info (const char * nombreArch)
+void liberarMatriz (t_pixel** mat, int filas)
 {
-    FILE * pf = fopen(nombreArch, "rb");
-    if(!pf)
-        return false;
+    for(int i = 0; i < filas; i++)
+    {
+        free(mat[i]);
+    }
+    free(mat);
+}
 
-    unsigned int tamArchivo, offsetDatos, alto, ancho, compresion, tamImagen;
-    unsigned short bits;
+void guardarMatrizArchivo (t_pixel ** matriz, int filas, int col, int padding, FILE * pf)
+{
+    unsigned char pad[3] = {0, 255, 0};
 
-    fseek(pf, 2, SEEK_SET);
-    fread(&tamArchivo, sizeof(int), 1, pf);
-
-    fseek(pf, 10, SEEK_SET);
-    fread(&offsetDatos, sizeof(int), 1, pf);
-    
-    fseek(pf, 18, SEEK_SET);
-    fread(&ancho, sizeof(int), 1, pf);
-    fread(&alto, sizeof(int), 1, pf);
-
-    fseek(pf, 28, SEEK_SET);
-    fread(&bits, sizeof(short), 1, pf);
-
-    fread(&compresion, sizeof(int), 1, pf);
-
-    fread(&tamImagen, sizeof(int), 1, pf);
-
-    int padding = (4 - (ancho * BYTES_X_PIXEL) % 4) % 4;
-    if(tamImagen == 0)
-        tamImagen = (ancho * BYTES_X_PIXEL + padding) * alto;
-
-    printf("Archivo: %s\n", nombreArch);
-    printf("Tamaño del archivo: %d bytes\n", tamArchivo);
-    printf("Dimensiones: %dx%d pixeles\n", ancho, alto);
-    printf("Profundida de color: %d bits\n", bits);
-    
-    printf("Offset de datos: %d\n", offsetDatos);
-    printf("Tamaño de imagen: %d bytes\n", tamImagen);
-    printf("Padding por fila: %d bytes\n", padding);
-
-    fclose(pf);
-    return true;
+    for(int i = 0; i < filas; i++)
+    {
+        for(int j = 0; j < col; j++)
+        {
+            fwrite(&matriz[i][j], sizeof(t_pixel), 1, pf);
+        }
+        fwrite(pad, sizeof(unsigned char), padding, pf);
+    }
 }
