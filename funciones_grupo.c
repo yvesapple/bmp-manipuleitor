@@ -92,6 +92,27 @@ int procesar_imagen (int argc, char* argv[])
                     negativo(imagen, archSalida, &header);
                     flagFunciones[2] = 1;
                 }
+
+                else if(strncmp(opcion, "--escala-de-grises", strlen("--escala-de-grises")) == 0 && flagFunciones[3] != 1)
+                {
+                    generarNombreArchivo("DUALISMO_escala-de-grises_", imagen, archSalida);
+                    escala_de_grises(imagen, archSalida, &header);
+                    flagFunciones[3] = 1;
+                }
+                
+                else if(strncmp(opcion, "--espejar-horizontal", strlen("--espejar-horizontal")) == 0 && flagFunciones[4] != 1)
+                {
+                    generarNombreArchivo("DUALISMO_espejar-horizontal_", imagen, archSalida);
+                    espejar_horizontal(imagen, archSalida, &header);
+                    flagFunciones[4] = 1;
+                }
+
+                else if(strncmp(opcion, "--espejar-vertical", strlen("--espejar-vertical")) == 0 && flagFunciones[5] != 1)
+                {
+                    generarNombreArchivo("DUALISMO_espejar-vertical_", imagen, archSalida);
+                    espejar_vertical(imagen, archSalida, &header);
+                    flagFunciones[5] = 1;
+                }
             }
         }
     }
