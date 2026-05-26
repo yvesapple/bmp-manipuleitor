@@ -9,6 +9,8 @@
 #include "utilidades.h"
 #include "filtros_basicos.h"
 
+#define TAM_MAX_NOMBRE 256
+
 extern bool verbose;
 
 typedef enum {
@@ -61,4 +63,6 @@ void liberarMatriz (t_pixel** mat, int filas);
 void guardarMatrizArchivo (t_pixel ** matriz, int filas, int col, int padding, FILE * pf);
 
 void copiar_bytes (FILE * origen, FILE * dest, int offsetDatos);
+
+void generarNombreArchivo (const char * prefijo, const char * nombreArch, char * resultado);
 #endif // FUNCIONES_GRUPO_H_INCLUDED
