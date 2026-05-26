@@ -14,12 +14,7 @@ bool negativo (const char * origen, const char * dest, t_header * header)
         return false;
     }
 
-    char byte;
-    for(int i = 0; i < header->offsetDatos; i++)
-    {
-        fread(&byte, sizeof(char), 1, pf_origen);
-        fwrite(&byte, sizeof(char), 1, pf_dest);
-    }
+    copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
 
     t_pixel **matriz = crearMatriz(header->alto, header->ancho);
 
