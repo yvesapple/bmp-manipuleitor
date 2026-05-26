@@ -8,6 +8,7 @@
 
 #include "utilidades.h"
 #include "filtros_basicos.h"
+#include "rotaciones.h"
 
 #define TAM_MAX_NOMBRE 256
 

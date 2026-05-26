@@ -113,6 +113,20 @@ int procesar_imagen (int argc, char* argv[])
                     espejar_vertical(imagen, archSalida, &header);
                     flagFunciones[5] = 1;
                 }
+
+                else if(strncmp(opcion, "--rotar-derecha", strlen("--rotar-derecha")) == 0 && flagFunciones[6] != 1)
+                {
+                    generarNombreArchivo("DUALISMO_rotar-derecha_", imagen, archSalida);
+                    rotar_derecha(imagen, archSalida, &header);
+                    flagFunciones[6] = 1;
+                }
+
+                else if(strncmp(opcion, "--rotar-izquierda", strlen("--rotar-izquierda")) == 0 && flagFunciones[7] != 1)
+                {
+                    generarNombreArchivo("DUALISMO_rotar-izquierda_", imagen, archSalida);
+                    rotar_izquierda(imagen, archSalida, &header);
+                    flagFunciones[7] = 1;
+                }
             }
         }
     }
