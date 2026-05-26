@@ -35,6 +35,7 @@ int procesar_imagen (int argc, char* argv[])
     bool bmpValidos = true;
 
     t_header header;
+    char archSalida[TAM_MAX_NOMBRE];
 
     if(cantBMP == 2)
     {
@@ -53,20 +54,21 @@ int procesar_imagen (int argc, char* argv[])
 
         return EXITO;
     }
+      
+    int flagFunciones[18]= {0};
 
-    int i = 1;      // argv[0] es el nombre del programa
-    int flagFunciones[18]= {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-
-    while(i < argc)
+    for(int i = 1; i < argc; i++)   // argv[0] es el nombre del programa
     {
         const char * opcion = argv[i];
-        cargar_header(bmpEncontrados[0], &header);
+        const char * imagen = bmpEncontrados[0];
+        if(!cargar_header(imagen, &header))
+            return ERROR_ARCHIVO;
 
-        if((strcmp(opcion, bmpEncontrados[0]) != 0))
+        if((strcmp(opcion, imagen) != 0))
         {
             if(strncmp(opcion, "--validar", strlen("--validar")) == 0 && flagFunciones[0] != 1)
             {
-                printf("Validando %s...", bmpEncontrados[0]);
+                printf("Validando %s...", imagen);
                 if(!comando_validar(&header))
                     printf("ARCHIVO INVALIDO - No se puede procesar\n");
                 flagFunciones[0] = 1;
@@ -74,18 +76,24 @@ int procesar_imagen (int argc, char* argv[])
 
             else if(strncmp(opcion, "--info", strlen("--info")) == 0 && flagFunciones[1] != 1)
             {
-                printf("Archivo: %s\n", bmpEncontrados[0]);
+                printf("Archivo: %s\n", imagen);
                 mostrar_info(&header);
                 flagFunciones[1] = 1;
             }
             
-            else if(strncmp(opcion, "--negativo", strlen("--negativo")) == 0 && flagFunciones[2] != 1)
+            else
             {
-                // Completar
+                if(!validar_bmp(&header))
+                    return BMP_INVALIDO;
+
+                if(strncmp(opcion, "--negativo", strlen("--negativo")) == 0 && flagFunciones[2] != 1)
+                {
+                    generarNombreArchivo("DUALISMO_negativo_", imagen, archSalida);
+                    negativo(imagen, archSalida, &header);
+                    flagFunciones[2] = 1;
+                }
             }
         }
-
-        i++;
     }
 
     return EXITO;
@@ -187,4 +195,18 @@ void copiar_bytes (FILE * origen, FILE * dest, int offsetDatos)
         fread(&byte, sizeof(char), 1, origen);
         fwrite(&byte, sizeof(char), 1, dest);
     }
+}
+
+void generarNombreArchivo (const char * prefijo, const char * nombreArch, char * resultado)
+{
+    const char * nombreBase = strrchr(nombreArch, '/');
+    if(nombreBase == NULL)
+        nombreBase = strrchr(nombreArch, '\\');
+
+    if(nombreBase == NULL)
+        nombreBase = nombreArch;
+    else
+        nombreBase++;
+
+    snprintf(resultado, TAM_MAX_NOMBRE, "%s%s", prefijo, nombreBase);
 }
