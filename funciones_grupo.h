@@ -59,4 +59,6 @@ t_pixel** crearMatriz (int alto, int ancho);
 void liberarMatriz (t_pixel** mat, int filas);
 
 void guardarMatrizArchivo (t_pixel ** matriz, int filas, int col, int padding, FILE * pf);
+
+void copiar_bytes (FILE * origen, FILE * dest, int offsetDatos);
 #endif // FUNCIONES_GRUPO_H_INCLUDED

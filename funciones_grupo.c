@@ -177,3 +177,14 @@ void guardarMatrizArchivo (t_pixel ** matriz, int filas, int col, int padding, F
         fwrite(pad, sizeof(unsigned char), padding, pf);
     }
 }
+
+void copiar_bytes (FILE * origen, FILE * dest, int offsetDatos)
+{
+    char byte;
+
+    for(int i = 0; i < offsetDatos; i++)
+    {
+        fread(&byte, sizeof(char), 1, origen);
+        fwrite(&byte, sizeof(char), 1, dest);
+    }
+}
