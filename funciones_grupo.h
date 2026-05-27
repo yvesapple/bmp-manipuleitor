@@ -102,4 +102,6 @@ void copiar_bytes (FILE * origen, FILE * dest, int offsetDatos);
  * @param resultado String en donde se guarda la concatenacion.
  */
 void generarNombreArchivo (const char * prefijo, const char * nombreArch, char * resultado);
+
+bool esParametroUtilidad (const char * opcion);
 #endif // FUNCIONES_GRUPO_H_INCLUDED
