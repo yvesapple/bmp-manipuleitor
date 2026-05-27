@@ -1,9 +1,9 @@
 #include "funciones_grupo.h"
 
+bool verbose = false;
+
 int procesar_imagen (int argc, char* argv[])
 {
-    bool verbose = false;
-
     for(int i = 1; i < argc; i++)
     {
         if(strcmp(argv[i], "--help") == 0)
@@ -54,15 +54,17 @@ int procesar_imagen (int argc, char* argv[])
 
         return EXITO;
     }
-      
+    
+    const char * imagen = bmpEncontrados[0];
+    if(!cargar_header(imagen, &header))
+            return ERROR_ARCHIVO;
+
     int flagFunciones[18]= {0};
 
     for(int i = 1; i < argc; i++)   // argv[0] es el nombre del programa
     {
         const char * opcion = argv[i];
-        const char * imagen = bmpEncontrados[0];
-        if(!cargar_header(imagen, &header))
-            return ERROR_ARCHIVO;
+        bool filtroValido = true;
 
         if((strcmp(opcion, imagen) != 0))
         {
@@ -127,6 +129,22 @@ int procesar_imagen (int argc, char* argv[])
                     rotar_izquierda(imagen, archSalida, &header);
                     flagFunciones[7] = 1;
                 }
+
+                else
+                {
+                    filtroValido = false;
+                    if(!esParametroUtilidad(opcion))
+                    {
+                        printf("Filtro invalido: %s\n", opcion);
+                    }
+                }
+
+                if(verbose && filtroValido)
+                {
+                    printf("[INFO] Aplicando filtro: %s\n", opcion);
+                    printf("[INFO] Guardando resultado: %s\n", archSalida);
+                    printf("[INFO] Filtro %s completado exitosamente\n", opcion);
+                }
             }
         }
     }
@@ -172,6 +190,9 @@ bool validar_bmp (t_header * header)
 
 t_pixel** crearMatriz (int filas, int col)
 {
+    if(verbose)
+        printf("[INFO] Reservando memoria para matriz %dx%d...\n", filas, col);
+
     t_pixel **matriz = malloc(filas * sizeof(t_pixel*));
     if(!matriz)
     {
@@ -195,11 +216,17 @@ t_pixel** crearMatriz (int filas, int col)
         }
     }
 
+    if(verbose)
+        printf("[INFO] Memoria reservada exitosamente (%d pixeles)\n", filas * col * BYTES_X_PIXEL);
+
     return matriz;
 }
 
 void liberarMatriz (t_pixel** mat, int filas)
 {
+    if(verbose)
+        printf("[INFO] Liberando memoria...\n");
+
     for(int i = 0; i < filas; i++)
     {
         free(mat[i]);
@@ -244,4 +271,21 @@ void generarNombreArchivo (const char * prefijo, const char * nombreArch, char *
         nombreBase++;
 
     snprintf(resultado, TAM_MAX_NOMBRE, "%s%s", prefijo, nombreBase);
+}
+
+bool esParametroUtilidad (const char * opcion)
+{
+    if(strncmp(opcion, "--info", strlen("--info")) == 0)
+        return true;
+
+    if(strncmp(opcion, "--validar", strlen("--validar")) == 0)
+        return true;
+
+    if(strncmp(opcion, "--verbose", strlen("--verbose")) == 0)
+        return true;
+
+    if(strncmp(opcion, "--help", strlen("--help")) == 0)
+        return true;
+
+    return false;
 }
