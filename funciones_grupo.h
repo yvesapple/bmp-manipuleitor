@@ -104,4 +104,6 @@ void copiar_bytes (FILE * origen, FILE * dest, int offsetDatos);
 void generarNombreArchivo (const char * prefijo, const char * nombreArch, char * resultado);
 
 bool esParametroUtilidad (const char * opcion);
+
+int buscarPorcentaje (const char * parametro);
 #endif // FUNCIONES_GRUPO_H_INCLUDED
