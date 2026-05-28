@@ -289,3 +289,24 @@ bool esParametroUtilidad (const char * opcion)
 
     return false;
 }
+
+int buscarPorcentaje (const char * parametro)
+{
+    char aux[4];        // 3 bytes (0-100) 1 byte (\0)
+    const char * ptrCadena = strrchr(parametro, '=');
+    if(!ptrCadena)
+        return ERROR_ARGUMENTOS;
+
+    ptrCadena++;        // Saltear '='
+    strcpy(aux, ptrCadena);
+    aux[3] = '\0';
+
+    int porcentaje = atoi(aux);
+    if(porcentaje <= 0 || porcentaje > 100)
+    {
+        printf("Porcentaje invalido\n");
+        return ERROR_ARGUMENTOS;
+    }
+
+    return porcentaje;
+}
