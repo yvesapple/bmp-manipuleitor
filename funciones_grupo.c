@@ -32,13 +32,14 @@ int procesar_imagen (int argc, char* argv[])
     if(!cantBMP)
         return ERROR_ARGUMENTOS;
 
-    bool bmpValidos = true;
+    // bool bmpValidos = true;
 
     t_header header;
-    char archSalida[TAM_MAX_NOMBRE];
+    char nombre_salida[TAM_MAX_NOMBRE];
 
     if(cantBMP == 2)
     {
+    /*
         for(int i = 0; i < cantBMP; i++)
         {
             cargar_header(bmpEncontrados[i], &header);
@@ -51,13 +52,20 @@ int procesar_imagen (int argc, char* argv[])
 
         // Concatenación horizontal
         // Concatenación vertical
-
+    */
         return EXITO;
     }
-    
+
     const char * imagen = bmpEncontrados[0];
-    if(!cargar_header(imagen, &header))
-            return ERROR_ARCHIVO;
+
+    FILE * archEntrada = abrir_archivo(imagen, "rb");
+    if(!archEntrada)
+        return ERROR_ARCHIVO;
+
+    cargar_header(archEntrada, &header);
+
+    t_pixel **matriz = crearMatriz(header.alto, header.ancho);
+    // cargarMatriz(archEntrada, matriz, &header);
 
     int flagFunciones[18]= {0};
 
@@ -82,7 +90,7 @@ int procesar_imagen (int argc, char* argv[])
                 mostrar_info(&header);
                 flagFunciones[1] = 1;
             }
-            
+
             else
             {
                 if(!validar_bmp(&header))
@@ -90,43 +98,49 @@ int procesar_imagen (int argc, char* argv[])
 
                 if(strncmp(opcion, "--negativo", strlen("--negativo")) == 0 && flagFunciones[2] != 1)
                 {
-                    generarNombreArchivo("DUALISMO_negativo_", imagen, archSalida);
-                    negativo(imagen, archSalida, &header);
+                    generarNombreArchivo("DUALISMO_negativo_", imagen, nombre_salida);
+                    negativo(archEntrada, nombre_salida, &header, matriz);
+                    rewind(archEntrada);
                     flagFunciones[2] = 1;
                 }
 
                 else if(strncmp(opcion, "--escala-de-grises", strlen("--escala-de-grises")) == 0 && flagFunciones[3] != 1)
                 {
-                    generarNombreArchivo("DUALISMO_escala-de-grises_", imagen, archSalida);
-                    escala_de_grises(imagen, archSalida, &header);
+                    generarNombreArchivo("DUALISMO_escala-de-grises_", imagen, nombre_salida);
+                    escala_de_grises(archEntrada, nombre_salida, &header, matriz);
+                    rewind(archEntrada);
                     flagFunciones[3] = 1;
                 }
-                
+
                 else if(strncmp(opcion, "--espejar-horizontal", strlen("--espejar-horizontal")) == 0 && flagFunciones[4] != 1)
                 {
-                    generarNombreArchivo("DUALISMO_espejar-horizontal_", imagen, archSalida);
-                    espejar_horizontal(imagen, archSalida, &header);
+                    generarNombreArchivo("DUALISMO_espejar-horizontal_", imagen, nombre_salida);
+                    espejar_horizontal(archEntrada, nombre_salida, &header, matriz);
+                    rewind(archEntrada);
                     flagFunciones[4] = 1;
                 }
 
                 else if(strncmp(opcion, "--espejar-vertical", strlen("--espejar-vertical")) == 0 && flagFunciones[5] != 1)
                 {
-                    generarNombreArchivo("DUALISMO_espejar-vertical_", imagen, archSalida);
-                    espejar_vertical(imagen, archSalida, &header);
+                    generarNombreArchivo("DUALISMO_espejar-vertical_", imagen, nombre_salida);
+                    espejar_vertical(archEntrada, nombre_salida, &header, matriz);
+                    rewind(archEntrada);
                     flagFunciones[5] = 1;
                 }
 
                 else if(strncmp(opcion, "--rotar-derecha", strlen("--rotar-derecha")) == 0 && flagFunciones[6] != 1)
                 {
-                    generarNombreArchivo("DUALISMO_rotar-derecha_", imagen, archSalida);
-                    rotar_derecha(imagen, archSalida, &header);
+                    generarNombreArchivo("DUALISMO_rotar-derecha_", imagen, nombre_salida);
+                    rotar(archEntrada, nombre_salida, &header, matriz, DERECHA);
+                    rewind(archEntrada);
                     flagFunciones[6] = 1;
                 }
 
                 else if(strncmp(opcion, "--rotar-izquierda", strlen("--rotar-izquierda")) == 0 && flagFunciones[7] != 1)
                 {
-                    generarNombreArchivo("DUALISMO_rotar-izquierda_", imagen, archSalida);
-                    rotar_izquierda(imagen, archSalida, &header);
+                    generarNombreArchivo("DUALISMO_rotar-izquierda_", imagen, nombre_salida);
+                    rotar(archEntrada, nombre_salida, &header, matriz, IZQUIERDA);
+                    rewind(archEntrada);
                     flagFunciones[7] = 1;
                 }
 
@@ -142,12 +156,15 @@ int procesar_imagen (int argc, char* argv[])
                 if(verbose && filtroValido)
                 {
                     printf("[INFO] Aplicando filtro: %s\n", opcion);
-                    printf("[INFO] Guardando resultado: %s\n", archSalida);
+                    printf("[INFO] Guardando resultado: %s\n", nombre_salida);
                     printf("[INFO] Filtro %s completado exitosamente\n", opcion);
                 }
             }
         }
     }
+
+    liberarMatriz(matriz, header.alto);
+    fclose(archEntrada);
 
     return EXITO;
 }
@@ -309,4 +326,33 @@ int buscarPorcentaje (const char * parametro)
     }
 
     return porcentaje;
+}
+
+FILE* abrir_archivo (const char * path, const char * metodo)
+{
+    FILE * pf = fopen(path, metodo);
+    if(!pf)
+    {
+        printf("Sin permisos de lectura/escritura\n");
+        return NULL;
+    }
+
+    return pf;
+}
+
+void cargarMatriz (FILE * pf, t_pixel ** mat, t_header * header)
+{
+    long posInicial = ftell(pf);
+    fseek(pf, header->offsetDatos, SEEK_SET);
+
+    for(int i = 0; i < header->alto; i++)
+    {
+        for(int j = 0; j < header->ancho; j++)
+        {
+            fread(&mat[i][j], sizeof(t_pixel), 1, pf);
+        }
+        fseek(pf, header->padding, SEEK_CUR);
+    }
+
+    fseek(pf, posInicial, SEEK_SET);
 }

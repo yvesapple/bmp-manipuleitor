@@ -18,16 +18,22 @@ typedef struct {
     char firma[2];
 } t_header;
 
+typedef struct {
+    unsigned char b;
+    unsigned char g;
+    unsigned char r;
+} t_pixel;
+
 /**
  * @brief Carga la informacion de la imagen en una estructura.
- * 
+ *
  * @param nombreArch Ruta del archivo.
  * @param header Estructura a cargar.
- * 
+ *
  * @return true Si pudo cargar la informacion.
  * @return false Si no pudo abrir el archivo.
  */
-bool cargar_header (const char * nombreArch, t_header * header);
+void cargar_header (FILE * pf, t_header * header);
 
 /**
  * @brief Comprueba e imprime si el archivo es valido para procesar.
@@ -46,7 +52,7 @@ bool comando_validar (t_header * header);
 
 /**
  * @brief Imprime por consola la informacion del archivo.
- * 
+ *
  * @param header Estructura con la informacion del archivo.
  */
 void mostrar_info (t_header * header);
