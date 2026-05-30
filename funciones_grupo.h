@@ -23,12 +23,6 @@ typedef enum {
 
 } codigoRetorno;
 
-typedef struct {
-    unsigned char b;
-    unsigned char g;
-    unsigned char r;
-} t_pixel;
-
 int procesar_imagen (int argc, char* argv[]);
 
 /**
@@ -59,17 +53,17 @@ bool validar_bmp (t_header * header);
 
 /**
  * @brief Reserva memoria para una matriz dinamica.
- * 
+ *
  * @param alto Cantidad de filas.
  * @param ancho Cantidad de columnas.
- * 
+ *
  * @return Direccion de memoria del inicio de la matriz.
  */
 t_pixel** crearMatriz (int alto, int ancho);
 
 /**
  * @brief Libera la memoria reservada para la matriz.
- * 
+ *
  * @param mat Direccion de memoria del inicio de la matriz.
  * @param filas Cantida de filas a liberar.
  */
@@ -77,7 +71,7 @@ void liberarMatriz (t_pixel** mat, int filas);
 
 /**
  * @brief Escribe en un archivo binario la matriz dada.
- * 
+ *
  * @param matriz Direccion de memoria del inicio de la matriz.
  * @param filas Cantidad de filas de la matriz.
  * @param col Cantidad de columnas de la matriz.
@@ -88,7 +82,7 @@ void guardarMatrizArchivo (t_pixel ** matriz, int filas, int col, int padding, F
 
 /**
  * @brief Copia una cantidad dada de bytes de una archivo a otro.
- * 
+ *
  * @param origen Puntero al archivo desde donde se copia.
  * @param dest Puntero al archivo donde se escribe.
  */
@@ -96,7 +90,7 @@ void copiar_bytes (FILE * origen, FILE * dest, int offsetDatos);
 
 /**
  * @brief Genera un cadena de caracteres concatenando otras dos.
- * 
+ *
  * @param prefijo String con el que comienza la cadena.
  * @param nombreArch String con el que finaliza la cadena.
  * @param resultado String en donde se guarda la concatenacion.
@@ -106,4 +100,8 @@ void generarNombreArchivo (const char * prefijo, const char * nombreArch, char *
 bool esParametroUtilidad (const char * opcion);
 
 int buscarPorcentaje (const char * parametro);
+
+FILE* abrir_archivo (const char * path, const char * metodo);
+
+void cargarMatriz (FILE * pf, t_pixel ** mat, t_header * header);
 #endif // FUNCIONES_GRUPO_H_INCLUDED

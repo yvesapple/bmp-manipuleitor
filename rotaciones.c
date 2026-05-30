@@ -1,28 +1,11 @@
 #include "rotaciones.h"
 #include "funciones_grupo.h"
 
-bool rotar_derecha (const char * origen, const char * dest, t_header * header)
+bool rotar (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matOriginal, int metodo)
 {
-    return rotar(origen, dest, header, DERECHA);
-}
-
-bool rotar_izquierda (const char * origen, const char * dest, t_header * header)
-{
-    return rotar(origen, dest, header, IZQUIERDA);
-}
-
-bool rotar (const char * origen, const char * dest, t_header * header, int metodo)
-{
-    FILE *pf_origen = fopen(origen, "rb");
-    if(!pf_origen)
-        return false;
-
-    FILE *pf_dest = fopen(dest, "wb");
+    FILE *pf_dest = abrir_archivo(dest, "wb");
     if(!pf_dest)
-    {
-        fclose(pf_origen);
         return false;
-    }
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
 
@@ -37,18 +20,10 @@ bool rotar (const char * origen, const char * dest, t_header * header, int metod
     // Vuelvo al offset
     fseek(pf_dest, header->offsetDatos, SEEK_SET);
 
-    t_pixel **matOriginal = crearMatriz(header->alto, header->ancho);
     t_pixel **matRotada = crearMatriz(nuevoAlto, nuevoAncho);
 
     // Cargo la matriz original
-    for(int i = 0; i < header->alto; i++)
-    {
-        for(int j = 0; j < header->ancho; j++)
-        {
-            fread(&matOriginal[i][j], sizeof(t_pixel), 1, pf_origen);
-        }
-        fseek(pf_origen, header->padding, SEEK_CUR);
-    }
+    cargarMatriz(pf_origen, matOriginal, header);
 
     // Cargo la matriz rotada
     if(metodo == IZQUIERDA)
@@ -76,10 +51,8 @@ bool rotar (const char * origen, const char * dest, t_header * header, int metod
 
     guardarMatrizArchivo(matRotada, nuevoAlto, nuevoAncho, nuevoPadding, pf_dest);
 
-    liberarMatriz(matOriginal, header->alto);
     liberarMatriz(matRotada, nuevoAlto);
 
-    fclose(pf_origen);
     fclose(pf_dest);
     return true;
 }

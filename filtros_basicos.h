@@ -5,47 +5,46 @@
 
 /**
  * @brief Invierte los colores de la imagen dada.
- * 
+ *
  * @param origen Ruta al archivo de la imagen.
  * @param dest Ruta donde se va a escribir el resultado.
  * @param header Estructura con la informacion de cabecera de la imagen.
- * 
+ *
  * @return true Si se completo el filtro.
  * @return false Si no tiene permisos de lectura y escritura.
  */
-bool negativo (const char * origen, const char * dest, t_header * header);
-
+bool negativo (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matriz);
 /**
  * @brief Convierte una imagen a escala de grises promediando RGB
  * @param origen Ruta al archivo de la imagen.
  * @param dest Ruta donde se va a escribir el resultado.
  * @param header Estructura con la informacion de cabecera de la imagen.
- * 
+ *
  * @return true Si se completo el filtro.
  * @return false Si no tiene permisos de lectura y escritura.
  */
-bool escala_de_grises (const char * origen, const char * dest, t_header * header);
+bool escala_de_grises (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matriz);
 
 /**
  * @brief Voltea una imagen dada horizontalmente
  * @param origen Ruta al archivo de la imagen.
  * @param dest Ruta donde se va a escribir el resultado.
  * @param header Estructura con la informacion de cabecera de la imagen.
- * 
+ *
  * @return true Si se completo el filtro.
  * @return false Si no tiene permisos de lectura y escritura.
  */
-bool espejar_horizontal (const char * origen, const char * dest, t_header * header);
+bool espejar_horizontal (FILE * pf_origen, const char * dest, t_header * header, t_pixel **matriz);
 
 /**
  * @brief Voltea una imagen dada verticalmente
  * @param origen Ruta al archivo de la imagen.
  * @param dest Ruta donde se va a escribir el resultado.
  * @param header Estructura con la informacion de cabecera de la imagen.
- * 
+ *
  * @return true Si se completo el filtro.
  * @return false Si no tiene permisos de lectura y escritura.
  */
-bool espejar_vertical (const char * origen, const char * dest, t_header * header);
+bool espejar_vertical (FILE * pf_origen, const char * dest, t_header * header, t_pixel **matriz);
 
 #endif // FILTROS_BASICOS_H_INCLUDED

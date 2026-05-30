@@ -1,10 +1,8 @@
 #include "utilidades.h"
 
-bool cargar_header (const char * nombreArch, t_header * header)
+void cargar_header (FILE * pf, t_header * header)
 {
-    FILE * pf = fopen(nombreArch, "rb");
-    if(!pf)
-        return false;
+    long posInicial = ftell(pf);
 
     fread(header->firma, sizeof(char), 2, pf);
     fread(&header->tamArchivo, sizeof(unsigned int), 1, pf);
@@ -25,8 +23,7 @@ bool cargar_header (const char * nombreArch, t_header * header)
     if(header->tamImagen == 0)
         header->tamImagen = (header->ancho * BYTES_X_PIXEL + header->padding) * header->alto;
 
-    fclose(pf);
-    return true;
+    fseek(pf, posInicial, SEEK_SET);
 }
 
 bool comando_validar (t_header * header)
