@@ -9,7 +9,7 @@
 #include "utilidades.h"
 #include "filtros_basicos.h"
 #include "rotaciones.h"
-
+#include "filtros_con_parametros.h"
 #define TAM_MAX_NOMBRE 256
 
 extern bool verbose;
@@ -104,4 +104,13 @@ int buscarPorcentaje (const char * parametro);
 FILE* abrir_archivo (const char * path, const char * metodo);
 
 void cargarMatriz (FILE * pf, t_pixel ** mat, t_header * header);
+
+
+
+void copiar_header(t_header* original, t_header* nuevo);
+
+
 #endif // FUNCIONES_GRUPO_H_INCLUDED
+
+
+
