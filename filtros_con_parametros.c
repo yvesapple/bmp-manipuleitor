@@ -208,12 +208,6 @@ bool tonalidad_verde (const char * origen, const char * dest, t_header * header,
     return true;
 }
 
-
-
-
-
-
-
 bool tonalidad_rojo (const char * origen, const char * dest, t_header * header, const unsigned int porcentaje)
 {
     FILE * pf_origen = fopen(origen, "rb");
@@ -304,7 +298,7 @@ bool recortar (const char * origen, const char * dest, t_header * header, const 
     fwrite(&nuevo_header.ancho, sizeof(int), 1, pf_dest);
     fwrite(&nuevo_header.alto, sizeof(int), 1, pf_dest);
 
-    // Vuelvo para intercambiar tamanio del archivo
+    // Vuelvo para intercambiar tamanio de la imagen
     fseek(pf_dest, 34, SEEK_SET);
     fwrite(&nuevo_header.tamImagen, sizeof(int), 1, pf_dest);
 
@@ -365,14 +359,12 @@ bool achicar (FILE * pf_origen, const char * dest, t_header * header, t_pixel **
     fwrite(&nuevo_header.ancho, sizeof(int), 1, pf_dest);
     fwrite(&nuevo_header.alto, sizeof(int), 1, pf_dest);
 
-    // Vuelvo para intercambiar tamanio del archivo
+    // Vuelvo para intercambiar tamanio de la imagen
     fseek(pf_dest, 34, SEEK_SET);
     fwrite(&nuevo_header.tamImagen, sizeof(int), 1, pf_dest);
 
     // Vuelvo al offset
     fseek(pf_dest, header->offsetDatos, SEEK_SET);
-
-
 
     float saltoFila =(float)header->alto/nuevo_header.alto;
     float saltoCol =(float)header->ancho/nuevo_header.ancho;
@@ -384,13 +376,6 @@ bool achicar (FILE * pf_origen, const char * dest, t_header * header, t_pixel **
             matriz_achicada[i][j] = matriz[(int)(i * saltoFila)][(int)(j * saltoCol)];
         }
     }
-
-
-
-
-
-
-
 
     guardarMatrizArchivo(matriz_achicada, nuevo_header.alto,nuevo_header.ancho,nuevo_header.padding, pf_dest);
     liberarMatriz(matriz_achicada,nuevo_header.alto);
