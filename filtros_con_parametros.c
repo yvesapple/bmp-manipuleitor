@@ -208,7 +208,7 @@ bool tonalidad_verde (const char * origen, const char * dest, t_header * header,
     return true;
 }
 
-bool tonalidad_rojo (const char * origen, const char * dest, t_header * header, const unsigned int porcentaje)
+bool tonalidad_roja (const char * origen, const char * dest, t_header * header, const unsigned int porcentaje)
 {
     FILE * pf_origen = fopen(origen, "rb");
     if(!pf_origen)
