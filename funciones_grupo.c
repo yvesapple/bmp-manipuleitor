@@ -32,51 +32,42 @@ int procesar_imagen (int argc, char* argv[])
     if(!cantBMP)
         return ERROR_ARGUMENTOS;
 
-    // bool bmpValidos = true;
+    char nombre_salida[TAM_MAX_NOMBRE];
+    unsigned int porcentaje=0;
 
     t_header header;
-    char nombre_salida[TAM_MAX_NOMBRE];
-
-    if(cantBMP == 2)
-    {
-        /*
-            for(int i = 0; i < cantBMP; i++)
-            {
-                cargar_header(bmpEncontrados[i], &header);
-                if(!validar_bmp(&header))
-                    bmpValidos = false;
-            }
-
-            if(!bmpValidos)
-                return ERROR_ARCHIVO;
-
-            // Concatenación horizontal
-            // Concatenación vertical
-        */
-        return EXITO;
-    }
-
     const char * imagen = bmpEncontrados[0];
-    unsigned int porcentaje=0;
     FILE * archEntrada = abrir_archivo(imagen, "rb");
     if(!archEntrada)
         return ERROR_ARCHIVO;
-
     cargar_header(archEntrada, &header);
-
     t_pixel **matriz = crearMatriz(header.alto, header.ancho);
-    // cargarMatriz(archEntrada, matriz, &header);
+
+    t_header header2;
+    const char * imagen2 = NULL;
+    FILE * archEntrada2 = NULL;
+    t_pixel **matriz2 = NULL;
+    if(cantBMP == 2)
+    {
+        imagen2 = bmpEncontrados[1];
+        archEntrada2 = abrir_archivo(imagen2, "rb");
+        if(!archEntrada2)
+            return ERROR_ARCHIVO;
+        cargar_header(archEntrada2, &header2);
+        matriz2 = crearMatriz(header2.alto, header2.ancho);
+    }
 
     int flagFunciones[18]= {0};
+    int filtros_hallados = argc - cantBMP;
 
-    for(int i = 1; i < argc; i++)   // argv[0] es el nombre del programa
+    for(int i = 1; i < (filtros_hallados); i++)   // argv[0] es el nombre del programa
     {
         const char * opcion = argv[i];
         bool filtroValido = true;
 
         if((strcmp(opcion, imagen) != 0))
         {
-            porcentaje=buscarPorcentaje(opcion);
+            porcentaje=buscarPorcentaje(opcion); // por cada nueva pasada se busca porcentaje
 
             if(strncmp(opcion, "--validar", strlen("--validar")) == 0 && flagFunciones[0] != 1)
             {
@@ -192,7 +183,7 @@ int procesar_imagen (int argc, char* argv[])
 
                 else if(strncmp(opcion, "--recortar", strlen("--recortar")) == 0 && flagFunciones[13] != 1 && porcentaje!=-1 )
                 {
-                    generarNombreArchivo("DUALISMO--recortar_", imagen,nombre_salida);
+                    generarNombreArchivo("DUALISMO_recortar_", imagen,nombre_salida);
                     recortar(imagen,nombre_salida,&header,porcentaje);
                     rewind(archEntrada);
                     flagFunciones[13] = 1;
@@ -200,12 +191,27 @@ int procesar_imagen (int argc, char* argv[])
 
                 else if(strncmp(opcion, "--achicar", strlen("--achicar")) == 0 && flagFunciones[14] != 1 && porcentaje!=-1 )
                 {
-                    generarNombreArchivo("DUALISMO--achicar_", imagen,nombre_salida);
+                    generarNombreArchivo("DUALISMO_achicar_", imagen,nombre_salida);
                     achicar(archEntrada,nombre_salida,&header,matriz,porcentaje);
                     rewind(archEntrada);
                     flagFunciones[14] = 1;
                 }
 
+                else if(strncmp(opcion, "--concatenar-vertical", strlen("--concatenar-vertical")) == 0 && flagFunciones[15] != 1 && cantBMP == 2)
+                {
+                    generarNombreArchivo("DUALISMO_concatenar-vertical_", imagen,nombre_salida);
+                    concatenar_vertical(archEntrada, archEntrada2, nombre_salida, &header, &header2, matriz, matriz2);
+                    rewind(archEntrada);
+                    flagFunciones[15] = 1;
+                }
+
+                else if(strncmp(opcion, "--concatenar-horizontal", strlen("--concatenar-horizontal")) == 0 && flagFunciones[16] != 1 && cantBMP == 2)
+                {
+                    generarNombreArchivo("DUALISMO_concatenar-horizontal_", imagen,nombre_salida);
+                    concatenar_horizontal(archEntrada, archEntrada2, nombre_salida, &header, &header2, matriz, matriz2);
+                    rewind(archEntrada);
+                    flagFunciones[16] = 1;
+                }
 
                 else
                 {
@@ -222,15 +228,12 @@ int procesar_imagen (int argc, char* argv[])
                     printf("[INFO] Guardando resultado: %s\n", nombre_salida);
                     printf("[INFO] Filtro %s completado exitosamente\n", opcion);
                 }
-
-
-
-
             }
         }
     }
 
     liberarMatriz(matriz, header.alto);
+    liberarMatriz(matriz2, header2.alto);
     fclose(archEntrada);
 
     return EXITO;
@@ -423,12 +426,6 @@ void cargarMatriz (FILE * pf, t_pixel ** mat, t_header * header)
 
     fseek(pf, posInicial, SEEK_SET);
 }
-
-
-
-
-
-
 
 void copiar_header(t_header* original, t_header* nuevo)
 {

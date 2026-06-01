@@ -10,6 +10,8 @@
 #include "filtros_basicos.h"
 #include "rotaciones.h"
 #include "filtros_con_parametros.h"
+#include "concatenaciones.h"
+
 #define TAM_MAX_NOMBRE 256
 
 extern bool verbose;
