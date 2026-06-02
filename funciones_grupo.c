@@ -58,14 +58,14 @@ int procesar_imagen (int argc, char* argv[])
     }
 
     int flagFunciones[18]= {0};
-    int filtros_hallados = argc - cantBMP;
+    // int filtros_hallados = argc - cantBMP;
 
-    for(int i = 1; i < (filtros_hallados); i++)   // argv[0] es el nombre del programa
+    for(int i = 1; i < argc; i++)   // argv[0] es el nombre del programa
     {
         const char * opcion = argv[i];
         bool filtroValido = true;
 
-        if((strcmp(opcion, imagen) != 0))
+        if((strcmp(opcion, imagen) != 0) && strcmp(opcion, imagen2) != 0)
         {
             porcentaje=buscarPorcentaje(opcion); // por cada nueva pasada se busca porcentaje
 
@@ -137,8 +137,6 @@ int procesar_imagen (int argc, char* argv[])
                     flagFunciones[7] = 1;
                 }
 
-
-
                 else if(strncmp(opcion, "--aumentar-contraste", strlen("--aumentar-contraste")) == 0 && flagFunciones[8] != 1 && porcentaje!=-1 )
                 {
                     generarNombreArchivo("DUALISMO_aumentar-contraste_", imagen,nombre_salida);
@@ -147,7 +145,6 @@ int procesar_imagen (int argc, char* argv[])
                     flagFunciones[8] = 1;
                 }
 
-
                 else if(strncmp(opcion, "--reducir-contraste", strlen("--reducir-contraste")) == 0 && flagFunciones[9] != 1 && porcentaje!=-1 )
                 {
                     generarNombreArchivo("DUALISMO_reducir-contraste_", imagen,nombre_salida);
@@ -155,8 +152,6 @@ int procesar_imagen (int argc, char* argv[])
                     rewind(archEntrada);
                     flagFunciones[9] = 1;
                 }
-
-
 
                 else if(strncmp(opcion, "--tonalidad-azul", strlen("--tonalidad-azul")) == 0 && flagFunciones[10] != 1 && porcentaje!=-1 )
                 {
@@ -173,10 +168,10 @@ int procesar_imagen (int argc, char* argv[])
                     rewind(archEntrada);
                     flagFunciones[11] = 1;
                 }
-                else if(strncmp(opcion, "--tonalidad-rojo", strlen("--tonalidad-rojo")) == 0 && flagFunciones[12] != 1 && porcentaje!=-1 )
+                else if(strncmp(opcion, "--tonalidad-roja", strlen("--tonalidad-roja")) == 0 && flagFunciones[12] != 1 && porcentaje!=-1 )
                 {
-                    generarNombreArchivo("DUALISMO_tonalidad-rojo_", imagen,nombre_salida);
-                    tonalidad_rojo(imagen,nombre_salida,&header,porcentaje);
+                    generarNombreArchivo("DUALISMO_tonalidad-roja_", imagen,nombre_salida);
+                    tonalidad_roja(imagen,nombre_salida,&header,porcentaje);
                     rewind(archEntrada);
                     flagFunciones[12] = 1;
                 }
@@ -233,8 +228,10 @@ int procesar_imagen (int argc, char* argv[])
     }
 
     liberarMatriz(matriz, header.alto);
-    liberarMatriz(matriz2, header2.alto);
+    if(cantBMP == 2)
+        liberarMatriz(matriz2, header2.alto);
     fclose(archEntrada);
+    fclose(archEntrada2);
 
     return EXITO;
 }
