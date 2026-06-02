@@ -233,7 +233,8 @@ int procesar_imagen (int argc, char* argv[])
     }
 
     liberarMatriz(matriz, header.alto);
-    liberarMatriz(matriz2, header2.alto);
+    if(cantBMP == 2)
+        liberarMatriz(matriz2, header2.alto);
     fclose(archEntrada);
 
     return EXITO;
