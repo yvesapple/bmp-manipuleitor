@@ -23,7 +23,7 @@ bool negativo (FILE * pf_origen, const char * dest, t_header * header, t_pixel *
 
     guardarMatrizArchivo(matriz, header->alto, header->ancho, header->padding, pf_dest);
 
-    free(matriz);
+    liberarMatriz(matriz, header->alto);
     fclose(pf_dest);
     return true;
 }
@@ -53,7 +53,7 @@ bool escala_de_grises (FILE * pf_origen, const char * dest, t_header * header, t
 
     guardarMatrizArchivo(matriz, header->alto, header->ancho, header->padding, pf_dest);
 
-    free(matriz);
+    liberarMatriz(matriz, header->alto);
     fclose(pf_dest);
     return true;
 }
@@ -78,7 +78,7 @@ bool espejar_horizontal (FILE * pf_origen, const char * dest, t_header * header,
 
     guardarMatrizArchivo(matriz, header->alto, header->ancho, header->padding, pf_dest);
 
-    free(matriz);
+    liberarMatriz(matriz, header->alto);
     fclose(pf_dest);
     return true;
 }
@@ -99,12 +99,11 @@ bool espejar_vertical (FILE * pf_origen, const char * dest, t_header * header, t
         {
             matriz[header->alto - i - 1][j] = matrizOriginal[i][j];
         }
-        fseek(pf_origen, header->padding, SEEK_CUR);
     }
 
     guardarMatrizArchivo(matriz, header->alto, header->ancho, header->padding, pf_dest);
 
-    free(matriz);
+    liberarMatriz(matriz, header->alto);
     fclose(pf_dest);
     return true;
 }
