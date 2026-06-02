@@ -22,9 +22,6 @@ bool rotar (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** m
 
     t_pixel **matRotada = crearMatriz(nuevoAlto, nuevoAncho);
 
-    // Cargo la matriz original
-    cargarMatriz(pf_origen, matOriginal, header);
-
     // Cargo la matriz rotada
     if(metodo == IZQUIERDA)
     {
