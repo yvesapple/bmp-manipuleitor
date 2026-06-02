@@ -107,10 +107,9 @@ FILE* abrir_archivo (const char * path, const char * metodo);
 
 void cargarMatriz (FILE * pf, t_pixel ** mat, t_header * header);
 
-
-
 void copiar_header(t_header* original, t_header* nuevo);
 
+t_pixel** copiarMatriz (t_pixel** matOriginal, int filas, int col);
 
 #endif // FUNCIONES_GRUPO_H_INCLUDED
 

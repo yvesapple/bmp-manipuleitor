@@ -42,6 +42,7 @@ int procesar_imagen (int argc, char* argv[])
         return ERROR_ARCHIVO;
     cargar_header(archEntrada, &header);
     t_pixel **matriz = crearMatriz(header.alto, header.ancho);
+    cargarMatriz(archEntrada, matriz, &header);
 
     t_header header2;
     const char * imagen2 = NULL;
@@ -55,6 +56,7 @@ int procesar_imagen (int argc, char* argv[])
             return ERROR_ARCHIVO;
         cargar_header(archEntrada2, &header2);
         matriz2 = crearMatriz(header2.alto, header2.ancho);
+        cargarMatriz(archEntrada2, matriz2, &header2);
     }
 
     int flagFunciones[18]= {0};
@@ -65,7 +67,7 @@ int procesar_imagen (int argc, char* argv[])
         const char * opcion = argv[i];
         bool filtroValido = true;
 
-        if((strcmp(opcion, imagen) != 0) && strcmp(opcion, imagen2) != 0)
+        if((strcmp(opcion, imagen) != 0) && (cantBMP < 2 || strcmp(opcion, imagen2) != 0))
         {
             porcentaje=buscarPorcentaje(opcion); // por cada nueva pasada se busca porcentaje
 
@@ -229,9 +231,11 @@ int procesar_imagen (int argc, char* argv[])
 
     liberarMatriz(matriz, header.alto);
     if(cantBMP == 2)
+    {
         liberarMatriz(matriz2, header2.alto);
+        fclose(archEntrada2);
+    }
     fclose(archEntrada);
-    fclose(archEntrada2);
 
     return EXITO;
 }
@@ -437,3 +441,13 @@ void copiar_header(t_header* original, t_header* nuevo)
     nuevo->tamImagen = original->tamImagen;
 }
 
+t_pixel** copiarMatriz (t_pixel** matOriginal, int filas, int col)
+{
+    t_pixel ** copia = crearMatriz(filas, col);
+    for(int i = 0; i < filas; i++)
+    {
+        memcpy(copia[i], matOriginal[i], col * sizeof(t_pixel));
+    }
+
+    return copia;
+}
