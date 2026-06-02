@@ -47,10 +47,6 @@ int procesar_imagen (int argc, char* argv[])
     const char * imagen2 = NULL;
     FILE * archEntrada2 = NULL;
     t_pixel **matriz2 = NULL;
-
-    int filtros_hallados = argc - cantBMP;
-    int flagFunciones[18]= {0};
-
     if(cantBMP == 2)
     {
         imagen2 = bmpEncontrados[1];
@@ -59,45 +55,12 @@ int procesar_imagen (int argc, char* argv[])
             return ERROR_ARCHIVO;
         cargar_header(archEntrada2, &header2);
         matriz2 = crearMatriz(header2.alto, header2.ancho);
-
-        for(int i = 1; i < argc; i++)
-        {
-            const char * opcion = argv[i];
-
-            if((strcmp(opcion, imagen) != 0))
-            {
-                if(strncmp(opcion, "--concatenar-vertical", strlen("--concatenar-vertical")) == 0 && flagFunciones[0] != 1 && cantBMP == 2)
-                {
-                    generarNombreArchivo("DUALISMO_concatenar-vertical_", imagen,nombre_salida);
-                    concatenar_vertical(archEntrada, archEntrada2, nombre_salida, &header, &header2, matriz, matriz2);
-                    rewind(archEntrada);
-                    flagFunciones[0] = 1;
-                }
-
-                else if(strncmp(opcion, "--concatenar-horizontal", strlen("--concatenar-horizontal")) == 0 && flagFunciones[1] != 1 && cantBMP == 2)
-                {
-                    generarNombreArchivo("DUALISMO_concatenar-horizontal_", imagen,nombre_salida);
-                    concatenar_horizontal(archEntrada, archEntrada2, nombre_salida, &header, &header2, matriz, matriz2);
-                    rewind(archEntrada);
-                    flagFunciones[1] = 1;
-                }
-
-                else
-                {
-                    printf("Filtro invalido: %s\n", opcion);
-                }
-            }
-        }
-
-        liberarMatriz(matriz, header.alto);
-        liberarMatriz(matriz2, header2.alto);
-        fclose(archEntrada);
-        fclose(archEntrada2);
-
-        return EXITO;
     }
 
-    for(int i = 1; i <= (filtros_hallados); i++)   // argv[0] es el nombre del programa
+    int flagFunciones[18]= {0};
+    int filtros_hallados = argc - cantBMP;
+
+    for(int i = 1; i < (filtros_hallados); i++)   // argv[0] es el nombre del programa
     {
         const char * opcion = argv[i];
         bool filtroValido = true;
@@ -106,19 +69,19 @@ int procesar_imagen (int argc, char* argv[])
         {
             porcentaje=buscarPorcentaje(opcion); // por cada nueva pasada se busca porcentaje
 
-            if(strncmp(opcion, "--validar", strlen("--validar")) == 0 && flagFunciones[2] != 1)
+            if(strncmp(opcion, "--validar", strlen("--validar")) == 0 && flagFunciones[0] != 1)
             {
                 printf("Validando %s...", imagen);
                 if(!comando_validar(&header))
                     printf("ARCHIVO INVALIDO - No se puede procesar\n");
-                flagFunciones[2] = 1;
+                flagFunciones[0] = 1;
             }
 
-            else if(strncmp(opcion, "--info", strlen("--info")) == 0 && flagFunciones[3] != 1)
+            else if(strncmp(opcion, "--info", strlen("--info")) == 0 && flagFunciones[1] != 1)
             {
                 printf("Archivo: %s\n", imagen);
                 mostrar_info(&header);
-                flagFunciones[3] = 1;
+                flagFunciones[1] = 1;
             }
 
             else
@@ -126,105 +89,126 @@ int procesar_imagen (int argc, char* argv[])
                 if(!validar_bmp(&header))
                     return BMP_INVALIDO;
 
-                if(strncmp(opcion, "--negativo", strlen("--negativo")) == 0 && flagFunciones[4] != 1)
+                if(strncmp(opcion, "--negativo", strlen("--negativo")) == 0 && flagFunciones[2] != 1)
                 {
                     generarNombreArchivo("DUALISMO_negativo_", imagen, nombre_salida);
                     negativo(archEntrada, nombre_salida, &header, matriz);
                     rewind(archEntrada);
-                    flagFunciones[4] = 1;
+                    flagFunciones[2] = 1;
                 }
 
-                else if(strncmp(opcion, "--escala-de-grises", strlen("--escala-de-grises")) == 0 && flagFunciones[5] != 1)
+                else if(strncmp(opcion, "--escala-de-grises", strlen("--escala-de-grises")) == 0 && flagFunciones[3] != 1)
                 {
                     generarNombreArchivo("DUALISMO_escala-de-grises_", imagen, nombre_salida);
                     escala_de_grises(archEntrada, nombre_salida, &header, matriz);
                     rewind(archEntrada);
-                    flagFunciones[5] = 1;
+                    flagFunciones[3] = 1;
                 }
 
-                else if(strncmp(opcion, "--espejar-horizontal", strlen("--espejar-horizontal")) == 0 && flagFunciones[6] != 1)
+                else if(strncmp(opcion, "--espejar-horizontal", strlen("--espejar-horizontal")) == 0 && flagFunciones[4] != 1)
                 {
                     generarNombreArchivo("DUALISMO_espejar-horizontal_", imagen, nombre_salida);
                     espejar_horizontal(archEntrada, nombre_salida, &header, matriz);
                     rewind(archEntrada);
-                    flagFunciones[6] = 1;
+                    flagFunciones[4] = 1;
                 }
 
-                else if(strncmp(opcion, "--espejar-vertical", strlen("--espejar-vertical")) == 0 && flagFunciones[7] != 1)
+                else if(strncmp(opcion, "--espejar-vertical", strlen("--espejar-vertical")) == 0 && flagFunciones[5] != 1)
                 {
                     generarNombreArchivo("DUALISMO_espejar-vertical_", imagen, nombre_salida);
                     espejar_vertical(archEntrada, nombre_salida, &header, matriz);
                     rewind(archEntrada);
-                    flagFunciones[7] = 1;
+                    flagFunciones[5] = 1;
                 }
 
-                else if(strncmp(opcion, "--rotar-derecha", strlen("--rotar-derecha")) == 0 && flagFunciones[8] != 1)
+                else if(strncmp(opcion, "--rotar-derecha", strlen("--rotar-derecha")) == 0 && flagFunciones[6] != 1)
                 {
                     generarNombreArchivo("DUALISMO_rotar-derecha_", imagen, nombre_salida);
                     rotar(archEntrada, nombre_salida, &header, matriz, DERECHA);
                     rewind(archEntrada);
-                    flagFunciones[8] = 1;
+                    flagFunciones[6] = 1;
                 }
 
-                else if(strncmp(opcion, "--rotar-izquierda", strlen("--rotar-izquierda")) == 0 && flagFunciones[9] != 1)
+                else if(strncmp(opcion, "--rotar-izquierda", strlen("--rotar-izquierda")) == 0 && flagFunciones[7] != 1)
                 {
                     generarNombreArchivo("DUALISMO_rotar-izquierda_", imagen, nombre_salida);
                     rotar(archEntrada, nombre_salida, &header, matriz, IZQUIERDA);
                     rewind(archEntrada);
-                    flagFunciones[9] = 1;
+                    flagFunciones[7] = 1;
                 }
 
-                else if(strncmp(opcion, "--aumentar-contraste", strlen("--aumentar-contraste")) == 0 && flagFunciones[10] != 1 && porcentaje!=-1 )
+
+
+                else if(strncmp(opcion, "--aumentar-contraste", strlen("--aumentar-contraste")) == 0 && flagFunciones[8] != 1 && porcentaje!=-1 )
                 {
                     generarNombreArchivo("DUALISMO_aumentar-contraste_", imagen,nombre_salida);
                     aumentar_contraste(imagen,nombre_salida,&header,porcentaje);
                     rewind(archEntrada);
-                    flagFunciones[10] = 1;
+                    flagFunciones[8] = 1;
                 }
 
-                else if(strncmp(opcion, "--reducir-contraste", strlen("--reducir-contraste")) == 0 && flagFunciones[11] != 1 && porcentaje!=-1 )
+
+                else if(strncmp(opcion, "--reducir-contraste", strlen("--reducir-contraste")) == 0 && flagFunciones[9] != 1 && porcentaje!=-1 )
                 {
                     generarNombreArchivo("DUALISMO_reducir-contraste_", imagen,nombre_salida);
                     reducir_contraste(imagen,nombre_salida,&header,porcentaje);
                     rewind(archEntrada);
-                    flagFunciones[11] = 1;
+                    flagFunciones[9] = 1;
                 }
 
-                else if(strncmp(opcion, "--tonalidad-azul", strlen("--tonalidad-azul")) == 0 && flagFunciones[12] != 1 && porcentaje!=-1 )
+
+
+                else if(strncmp(opcion, "--tonalidad-azul", strlen("--tonalidad-azul")) == 0 && flagFunciones[10] != 1 && porcentaje!=-1 )
                 {
                     generarNombreArchivo("DUALISMO_tonalidad-azul_", imagen,nombre_salida);
                     tonalidad_azul(imagen,nombre_salida,&header,porcentaje);
                     rewind(archEntrada);
-                    flagFunciones[12] = 1;
+                    flagFunciones[10] = 1;
                 }
 
-                else if(strncmp(opcion, "--tonalidad-verde", strlen("--tonalidad-verde")) == 0 && flagFunciones[13] != 1 && porcentaje!=-1 )
+                else if(strncmp(opcion, "--tonalidad-verde", strlen("--tonalidad-verde")) == 0 && flagFunciones[11] != 1 && porcentaje!=-1 )
                 {
                     generarNombreArchivo("DUALISMO_tonalidad-verde_", imagen,nombre_salida);
                     tonalidad_verde(imagen,nombre_salida,&header,porcentaje);
                     rewind(archEntrada);
-                    flagFunciones[13] = 1;
+                    flagFunciones[11] = 1;
                 }
-                else if(strncmp(opcion, "--tonalidad-roja", strlen("--tonalidad-roja")) == 0 && flagFunciones[14] != 1 && porcentaje!=-1 )
+                else if(strncmp(opcion, "--tonalidad-rojo", strlen("--tonalidad-rojo")) == 0 && flagFunciones[12] != 1 && porcentaje!=-1 )
                 {
-                    generarNombreArchivo("DUALISMO_tonalidad-roja_", imagen,nombre_salida);
-                    tonalidad_roja(imagen,nombre_salida,&header,porcentaje);
+                    generarNombreArchivo("DUALISMO_tonalidad-rojo_", imagen,nombre_salida);
+                    tonalidad_rojo(imagen,nombre_salida,&header,porcentaje);
                     rewind(archEntrada);
-                    flagFunciones[14] = 1;
+                    flagFunciones[12] = 1;
                 }
 
-                else if(strncmp(opcion, "--recortar", strlen("--recortar")) == 0 && flagFunciones[15] != 1 && porcentaje!=-1 )
+                else if(strncmp(opcion, "--recortar", strlen("--recortar")) == 0 && flagFunciones[13] != 1 && porcentaje!=-1 )
                 {
                     generarNombreArchivo("DUALISMO_recortar_", imagen,nombre_salida);
                     recortar(imagen,nombre_salida,&header,porcentaje);
                     rewind(archEntrada);
-                    flagFunciones[15] = 1;
+                    flagFunciones[13] = 1;
                 }
 
-                else if(strncmp(opcion, "--achicar", strlen("--achicar")) == 0 && flagFunciones[16] != 1 && porcentaje!=-1 )
+                else if(strncmp(opcion, "--achicar", strlen("--achicar")) == 0 && flagFunciones[14] != 1 && porcentaje!=-1 )
                 {
                     generarNombreArchivo("DUALISMO_achicar_", imagen,nombre_salida);
                     achicar(archEntrada,nombre_salida,&header,matriz,porcentaje);
+                    rewind(archEntrada);
+                    flagFunciones[14] = 1;
+                }
+
+                else if(strncmp(opcion, "--concatenar-vertical", strlen("--concatenar-vertical")) == 0 && flagFunciones[15] != 1 && cantBMP == 2)
+                {
+                    generarNombreArchivo("DUALISMO_concatenar-vertical_", imagen,nombre_salida);
+                    concatenar_vertical(archEntrada, archEntrada2, nombre_salida, &header, &header2, matriz, matriz2);
+                    rewind(archEntrada);
+                    flagFunciones[15] = 1;
+                }
+
+                else if(strncmp(opcion, "--concatenar-horizontal", strlen("--concatenar-horizontal")) == 0 && flagFunciones[16] != 1 && cantBMP == 2)
+                {
+                    generarNombreArchivo("DUALISMO_concatenar-horizontal_", imagen,nombre_salida);
+                    concatenar_horizontal(archEntrada, archEntrada2, nombre_salida, &header, &header2, matriz, matriz2);
                     rewind(archEntrada);
                     flagFunciones[16] = 1;
                 }
@@ -249,6 +233,7 @@ int procesar_imagen (int argc, char* argv[])
     }
 
     liberarMatriz(matriz, header.alto);
+    liberarMatriz(matriz2, header2.alto);
     fclose(archEntrada);
 
     return EXITO;
@@ -397,23 +382,17 @@ int buscarPorcentaje (const char * parametro)
     char aux[4];        // 3 bytes (0-100) 1 byte (\0)
     const char * ptrCadena = strrchr(parametro, '=');
     if(!ptrCadena)
-        return -1;
+        return ERROR_ARGUMENTOS;
 
-    int li = 0;
-
-    if(strncmp(parametro, "--recortar", strlen("--recortar")) == 0 || strncmp(parametro, "--achicar", strlen("--achicar")) == 0)
-        li = 1;
-
-    int porcentaje = 0;
     ptrCadena++;        // Saltear '='
     strcpy(aux, ptrCadena);
     aux[3] = '\0';
+    int porcentaje=0;
     porcentaje = atoi(aux);
-
     if(porcentaje <= 0 || porcentaje > 100)
     {
-        printf("Valor incorrecto para el porcentaje, ingresar valor entre %d y 100.\n", li);
-        return -1;
+        printf("Valor incorrecto para el porcentaje, ingresar valor entre 0 y 100.\n");
+        return ERROR_ARGUMENTOS;
     }
 
     return porcentaje;
