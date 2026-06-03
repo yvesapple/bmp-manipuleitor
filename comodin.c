@@ -15,11 +15,31 @@ bool comodin_efecto_VHS (FILE * pf_origen, const char * dest, t_header * header,
     t_pixel ** matriz_VHS = crearMatriz(header->alto, header->ancho);
     cargarMatriz(pf_origen, matriz_VHS, header);
 
+    /// Primer paso efecto cromatico
+    int offset_croma = 3;
+    int j_destino_rojo = 0, j_destino_azul = 0;
 
+    for(i = 0; i < header->alto; i++)
+    {
+        for(j = 0; j < header->ancho; j++)
+        {
+            j_destino_rojo = j+offset_croma;
+            j_destino_azul = j-offset_croma;
+            if(j_destino_azul >= 0 && j_destino_rojo < header->ancho)
+            {
+                matriz_VHS[i][j_destino_rojo].r = matriz[i][j].r;
+                matriz_VHS[i][j].g = matriz[i][j].g;
+                matriz_VHS[i][j_destino_azul].b = matriz[i][j].b;
 
-    int altura_banda = 20;
+            }
+        }
+    }
+    copiarMatriz(matriz_VHS, matriz, header->alto, header->ancho);
 
-    unsigned int bandas = (unsigned int) (header->alto / altura_banda + 1);
+    /// Segundo paso barrido de cinta
+
+    int altura_cinta = 20, offset = 0, j_destino;
+    unsigned int bandas = (unsigned int) (header->alto / altura_cinta);
     unsigned int* mapa_desplazamiento = (unsigned int*) calloc(bandas, sizeof(unsigned int));
     if(!mapa_desplazamiento)
     {
@@ -32,26 +52,30 @@ bool comodin_efecto_VHS (FILE * pf_origen, const char * dest, t_header * header,
         *(mapa_desplazamiento+i) = (rand() % 11) - 15;
     }
 
-    // visualizo mapa
-    puts("mapa desplazamiento");
-    for(i = 0; i < bandas; i++)
-    {
-
-        printf("pos = %d, valor = %d\n",i, *(mapa_desplazamiento+i));
-    }
-
-    // inicio desplazamiento
     for(i = 0; i < header->alto; i++)
     {
-        int offset = mapa_desplazamiento[i / altura_banda];
-
+        offset = mapa_desplazamiento[i / altura_cinta];
         for(j = 0; j < header->ancho; j++)
         {
-            int j_destino = j + offset;
-
+            j_destino = j + offset;
             if(j_destino >= 0 && j_destino < header->ancho)
             {
                 matriz_VHS[i][j_destino] = matriz[i][j];
+            }
+        }
+    }
+
+    int efecto = 0;
+    /// tercer paso efecto ruido en verde
+    for(i = 0; i < header->alto; i++)
+    {
+        efecto = rand() % 100;
+
+        if(efecto < 3)
+        {
+            for(int j = 0; j < header->ancho; j++)
+            {
+                matriz_VHS[i][j].g = 1 + rand() % 255;
             }
         }
     }
@@ -64,42 +88,10 @@ bool comodin_efecto_VHS (FILE * pf_origen, const char * dest, t_header * header,
     return true;
 }
 
-unsigned int ondular (unsigned int pos, unsigned int fila, unsigned int columna, unsigned int bandas, unsigned int* mapa_pos_extremos)
-{
-    static int direccion = -1;
-    static unsigned int limite_vueltas = 1;
-    static unsigned int fila_margen = 1;
-    static unsigned int primera_pasada = 1;
-    unsigned int dir_res = 0;
-
-
-    if(fila < 4)
-        dir_res = pos + fila;
-    if(fila == 3)
-    {
-        *(mapa_pos_extremos + columna) = dir_res;
-    }
-    else
-    {
-        if(fila_margen == 1 && primera_pasada == 1)
-            *(mapa_pos_extremos + columna)= pos; // por cada 8 pasadas guarda la posición extrema
-
-        if(limite_vueltas % (bandas * 8) == 0)
-        {
-            direccion *= -1;
-            limite_vueltas = 1;
+void copiarMatriz(t_pixel **origen, t_pixel **destino, int alto, int ancho) {
+    for (int i = 0; i < alto; i++) {
+        for (int j = 0; j < ancho; j++) {
+            destino[i][j] = origen[i][j];
         }
-
-        if(fila_margen == 8)
-        {
-            fila_margen = 1;
-            primera_pasada = 1;
-        }
-        dir_res = pos + *(mapa_pos_extremos + columna) + (fila_margen * direccion);
-        limite_vueltas++;
-
-        if(limite_vueltas % bandas == 0)
-            fila_margen++;
     }
-    return dir_res;
 }
