@@ -33,6 +33,7 @@ int procesar_imagen (int argc, char* argv[])
         return ERROR_ARGUMENTOS;
 
     char nombre_salida[TAM_MAX_NOMBRE];
+    limpiarNombreArchivo(nombre_salida);
     unsigned int porcentaje=0;
 
     t_header header;
@@ -93,112 +94,128 @@ int procesar_imagen (int argc, char* argv[])
 
                 if(strncmp(opcion, "--negativo", strlen("--negativo")) == 0 && flagFunciones[2] != 1)
                 {
-                    generarNombreArchivo("DUALISMO_negativo_", imagen, nombre_salida);
+                    generarNombreArchivo("DUALISMO_negativo_", imagen, nombre_salida, -1);
                     negativo(archEntrada, nombre_salida, &header, matriz);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[2] = 1;
                 }
 
                 else if(strncmp(opcion, "--escala-de-grises", strlen("--escala-de-grises")) == 0 && flagFunciones[3] != 1)
                 {
-                    generarNombreArchivo("DUALISMO_escala-de-grises_", imagen, nombre_salida);
+                    generarNombreArchivo("DUALISMO_escala-de-grises_", imagen, nombre_salida, -1);
                     escala_de_grises(archEntrada, nombre_salida, &header, matriz);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[3] = 1;
                 }
 
                 else if(strncmp(opcion, "--espejar-horizontal", strlen("--espejar-horizontal")) == 0 && flagFunciones[4] != 1)
                 {
-                    generarNombreArchivo("DUALISMO_espejar-horizontal_", imagen, nombre_salida);
+                    generarNombreArchivo("DUALISMO_espejar-horizontal_", imagen, nombre_salida, -1);
                     espejar_horizontal(archEntrada, nombre_salida, &header, matriz);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[4] = 1;
                 }
 
                 else if(strncmp(opcion, "--espejar-vertical", strlen("--espejar-vertical")) == 0 && flagFunciones[5] != 1)
                 {
-                    generarNombreArchivo("DUALISMO_espejar-vertical_", imagen, nombre_salida);
+                    generarNombreArchivo("DUALISMO_espejar-vertical_", imagen, nombre_salida, -1);
                     espejar_vertical(archEntrada, nombre_salida, &header, matriz);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[5] = 1;
                 }
 
                 else if(strncmp(opcion, "--rotar-derecha", strlen("--rotar-derecha")) == 0 && flagFunciones[6] != 1)
                 {
-                    generarNombreArchivo("DUALISMO_rotar-derecha_", imagen, nombre_salida);
+                    generarNombreArchivo("DUALISMO_rotar-derecha_", imagen, nombre_salida, -1);
                     rotar(archEntrada, nombre_salida, &header, matriz, DERECHA);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[6] = 1;
                 }
 
                 else if(strncmp(opcion, "--rotar-izquierda", strlen("--rotar-izquierda")) == 0 && flagFunciones[7] != 1)
                 {
-                    generarNombreArchivo("DUALISMO_rotar-izquierda_", imagen, nombre_salida);
+                    generarNombreArchivo("DUALISMO_rotar-izquierda_", imagen, nombre_salida, -1);
                     rotar(archEntrada, nombre_salida, &header, matriz, IZQUIERDA);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[7] = 1;
                 }
 
                 else if(strncmp(opcion, "--aumentar-contraste", strlen("--aumentar-contraste")) == 0 && flagFunciones[8] != 1 && porcentaje !=-1 )
                 {
-                    generarNombreArchivo("DUALISMO_aumentar-contraste_", imagen,nombre_salida);
+                    generarNombreArchivo("DUALISMO_aumentar-contraste_", imagen, nombre_salida, porcentaje);
                     aumentar_contraste(archEntrada, nombre_salida, &header, matriz, porcentaje);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[8] = 1;
                 }
 
                 else if(strncmp(opcion, "--reducir-contraste", strlen("--reducir-contraste")) == 0 && flagFunciones[9] != 1 && porcentaje !=-1 )
                 {
-                    generarNombreArchivo("DUALISMO_reducir-contraste_", imagen,nombre_salida);
+                    generarNombreArchivo("DUALISMO_reducir-contraste_", imagen, nombre_salida, porcentaje);
                     reducir_contraste(archEntrada, nombre_salida, &header, matriz, porcentaje);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[9] = 1;
                 }
 
                 else if(strncmp(opcion, "--tonalidad-azul", strlen("--tonalidad-azul")) == 0 && flagFunciones[10] != 1 && porcentaje !=-1 )
                 {
-                    generarNombreArchivo("DUALISMO_tonalidad-azul_", imagen,nombre_salida);
+                    generarNombreArchivo("DUALISMO_tonalidad-azul_", imagen, nombre_salida, porcentaje);
                     tonalidad_azul(archEntrada, nombre_salida, &header, matriz, porcentaje);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[10] = 1;
                 }
 
                 else if(strncmp(opcion, "--tonalidad-verde", strlen("--tonalidad-verde")) == 0 && flagFunciones[11] != 1 && porcentaje !=-1 )
                 {
-                    generarNombreArchivo("DUALISMO_tonalidad-verde_", imagen,nombre_salida);
+                    generarNombreArchivo("DUALISMO_tonalidad-verde_", imagen, nombre_salida, porcentaje);
                     tonalidad_verde(archEntrada, nombre_salida, &header, matriz, porcentaje);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[11] = 1;
                 }
                 else if(strncmp(opcion, "--tonalidad-roja", strlen("--tonalidad-roja")) == 0 && flagFunciones[12] != 1 && porcentaje!=-1 )
                 {
-                    generarNombreArchivo("DUALISMO_tonalidad-roja_", imagen,nombre_salida);
+                    generarNombreArchivo("DUALISMO_tonalidad-roja_", imagen, nombre_salida, porcentaje);
                     tonalidad_roja(archEntrada, nombre_salida, &header, matriz, porcentaje);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[12] = 1;
                 }
 
                 else if(strncmp(opcion, "--recortar", strlen("--recortar")) == 0 && flagFunciones[13] != 1 && porcentaje!=-1 )
                 {
-                    generarNombreArchivo("DUALISMO_recortar_", imagen,nombre_salida);
+                    generarNombreArchivo("DUALISMO_recortar_", imagen, nombre_salida, porcentaje);
                     recortar(archEntrada, nombre_salida, &header, matriz, porcentaje);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[13] = 1;
                 }
 
                 else if(strncmp(opcion, "--achicar", strlen("--achicar")) == 0 && flagFunciones[14] != 1 && porcentaje!=-1 )
                 {
-                    generarNombreArchivo("DUALISMO_achicar_", imagen,nombre_salida);
+                    generarNombreArchivo("DUALISMO_achicar_", imagen, nombre_salida, porcentaje);
                     achicar(archEntrada,nombre_salida,&header,matriz,porcentaje);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[14] = 1;
                 }
 
                 else if(strncmp(opcion, "--concatenar-vertical", strlen("--concatenar-vertical")) == 0 && flagFunciones[15] != 1 && cantBMP == 2)
                 {
-                    generarNombreArchivo("DUALISMO_concatenar-vertical_", imagen,nombre_salida);
+                    generarNombreArchivo("DUALISMO_concatenar-vertical_", imagen,nombre_salida, -1);
                     concatenar_vertical(archEntrada, archEntrada2, nombre_salida, &header, &header2, matriz, matriz2);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[15] = 1;
                 }
 
                 else if(strncmp(opcion, "--concatenar-horizontal", strlen("--concatenar-horizontal")) == 0 && flagFunciones[16] != 1 && cantBMP == 2)
                 {
-                    generarNombreArchivo("DUALISMO_concatenar-horizontal_", imagen,nombre_salida);
+                    generarNombreArchivo("DUALISMO_concatenar-horizontal_", imagen,nombre_salida, -1);
                     concatenar_horizontal(archEntrada, archEntrada2, nombre_salida, &header, &header2, matriz, matriz2);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[16] = 1;
                 }
 
                 else if(strncmp(opcion, "--comodin", strlen("--comodin")) == 0 && flagFunciones[17] != 1)
                 {
-                    generarNombreArchivo("DUALISMO_comodin_", imagen, nombre_salida);
+                    generarNombreArchivo("DUALISMO_comodin_", imagen, nombre_salida, -1);
                     comodin_efecto_VHS(archEntrada, nombre_salida, &header, matriz);
+                    limpiarNombreArchivo(nombre_salida);
                     flagFunciones[17] = 1;
                 }
 
@@ -342,7 +359,7 @@ void copiar_bytes (FILE * origen, FILE * dest, int offsetDatos)
     fseek(origen, posInicial, SEEK_SET);
 }
 
-void generarNombreArchivo (const char * prefijo, const char * nombreArch, char * resultado)
+void generarNombreArchivo (const char * prefijo, const char * nombreArch, char * resultado, int porcentaje)
 {
     const char * nombreBase = strrchr(nombreArch, '/');
     if(nombreBase == NULL)
@@ -353,7 +370,30 @@ void generarNombreArchivo (const char * prefijo, const char * nombreArch, char *
     else
         nombreBase++;
 
-    snprintf(resultado, TAM_MAX_NOMBRE, "%s%s", prefijo, nombreBase);
+    strcat(resultado, prefijo);
+
+    if(porcentaje != -1)
+    {
+        char aux[4];
+        snprintf(aux, sizeof(aux), "%d", porcentaje);;
+        char* ptr_resultado = strrchr(resultado, '_');
+        *ptr_resultado = '-';
+        strcat(resultado, aux);
+        while(*ptr_resultado)
+        {
+            ptr_resultado++;
+        }
+        *ptr_resultado = '_';
+        ptr_resultado++;
+        *ptr_resultado = '\0';
+    }
+
+    strcat(resultado, nombreBase);
+}
+
+void limpiarNombreArchivo(char* cad_nombre)
+{
+    *cad_nombre = '\0';
 }
 
 bool esParametroUtilidad (const char * opcion)
@@ -417,9 +457,6 @@ FILE* abrir_archivo (const char * path, const char * metodo)
 
 void cargarMatriz (FILE * pf, t_pixel ** mat, t_header * header)
 {
-    if(verbose)
-        printf("Leyendo datos de imagen...");
-        
     long posInicial = ftell(pf);
     fseek(pf, header->offsetDatos, SEEK_SET);
 
