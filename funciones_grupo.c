@@ -388,6 +388,16 @@ int buscarPorcentaje (const char * parametro)
         return -1;
 
     ptrCadena++;        // Saltear '='
+
+    for(const char *p = ptrCadena; *p != '\0'; p++)
+    {
+        if(*p < '0' || *p > '9')
+        {
+            printf("El porcentaje debe ser un numero (0-100)\n");
+            return -1;
+        }
+    }
+
     strcpy(aux, ptrCadena);
     aux[3] = '\0';
     int porcentaje = 0;
