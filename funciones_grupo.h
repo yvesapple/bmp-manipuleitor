@@ -1,3 +1,15 @@
+// Apellido: Avalos, Nahuel Agustín
+// DNI: 43816379
+// Entrega: Si
+
+// Apellido: Caro, Nicolas Dario
+// DNI: 40766722
+// Entrega: Si
+
+// Apellido: Dedo, Juan Pablo
+// DNI: 40239700
+// Entrega: Si
+
 #ifndef FUNCIONES_GRUPO_H_INCLUDED
 #define FUNCIONES_GRUPO_H_INCLUDED
 
@@ -11,6 +23,7 @@
 #include "rotaciones.h"
 #include "filtros_con_parametros.h"
 #include "concatenaciones.h"
+#include "comodin.h"
 
 #define TAM_MAX_NOMBRE 256
 
@@ -109,7 +122,7 @@ void cargarMatriz (FILE * pf, t_pixel ** mat, t_header * header);
 
 void copiar_header(t_header* original, t_header* nuevo);
 
-t_pixel** copiarMatriz (t_pixel** matOriginal, int filas, int col);
+void copiarMatriz (t_pixel** matOriginal, t_pixel** matCopia, int filas, int col);
 
 #endif // FUNCIONES_GRUPO_H_INCLUDED
 
