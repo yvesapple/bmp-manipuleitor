@@ -11,7 +11,8 @@ bool aumentar_contraste (FILE * pf_origen, const char * dest, t_header * header,
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
 
-    t_pixel ** matriz = copiarMatriz(matrizOriginal, header->alto, header->ancho);
+    t_pixel ** matriz = crearMatriz(header->alto, header->ancho);
+    copiarMatriz(matrizOriginal, matriz, header->alto, header->ancho);
 
     for(int i = 0; i < header->alto; i++)
     {
@@ -45,7 +46,8 @@ bool reducir_contraste (FILE * pf_origen, const char * dest, t_header * header, 
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
 
-    t_pixel **matriz = copiarMatriz(matOriginal, header->alto, header->ancho);
+    t_pixel **matriz = crearMatriz(header->alto, header->ancho);
+    copiarMatriz(matOriginal, matriz, header->alto, header->ancho);
 
     for(int i = 0; i < header->alto; i++)
     {
@@ -77,7 +79,8 @@ bool tonalidad_azul (FILE * pf_origen, const char * dest, t_header * header, t_p
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
 
-    t_pixel **matriz = copiarMatriz(matrizOriginal, header->alto, header->ancho);
+    t_pixel **matriz = crearMatriz(header->alto, header->ancho);
+    copiarMatriz(matrizOriginal, matriz, header->alto, header->ancho);
 
     int pixelAzul= 0;
     for(int i = 0; i < header->alto; i++)
@@ -104,7 +107,8 @@ bool tonalidad_verde (FILE * pf_origen, const char * dest, t_header * header, t_
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
 
-    t_pixel **matriz = copiarMatriz(matrizOriginal, header->alto, header->ancho);
+    t_pixel **matriz = crearMatriz(header->alto, header->ancho);
+    copiarMatriz(matrizOriginal, matriz, header->alto, header->ancho);
 
     int pixelVerde= 0;
     for(int i = 0; i < header->alto; i++)
@@ -133,7 +137,8 @@ bool tonalidad_roja (FILE * pf_origen, const char * dest, t_header * header, t_p
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
 
-    t_pixel **matriz = copiarMatriz(matrizOriginal, header->alto, header->ancho);
+    t_pixel **matriz = crearMatriz(header->alto, header->ancho);
+    copiarMatriz(matrizOriginal, matriz, header->alto, header->ancho);
 
     int pixelRojo= 0;
     for(int i = 0; i < header->alto; i++)

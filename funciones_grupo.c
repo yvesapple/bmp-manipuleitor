@@ -95,7 +95,6 @@ int procesar_imagen (int argc, char* argv[])
                 {
                     generarNombreArchivo("DUALISMO_negativo_", imagen, nombre_salida);
                     negativo(archEntrada, nombre_salida, &header, matriz);
-                    rewind(archEntrada);
                     flagFunciones[2] = 1;
                 }
 
@@ -103,7 +102,6 @@ int procesar_imagen (int argc, char* argv[])
                 {
                     generarNombreArchivo("DUALISMO_escala-de-grises_", imagen, nombre_salida);
                     escala_de_grises(archEntrada, nombre_salida, &header, matriz);
-                    rewind(archEntrada);
                     flagFunciones[3] = 1;
                 }
 
@@ -111,7 +109,6 @@ int procesar_imagen (int argc, char* argv[])
                 {
                     generarNombreArchivo("DUALISMO_espejar-horizontal_", imagen, nombre_salida);
                     espejar_horizontal(archEntrada, nombre_salida, &header, matriz);
-                    rewind(archEntrada);
                     flagFunciones[4] = 1;
                 }
 
@@ -119,7 +116,6 @@ int procesar_imagen (int argc, char* argv[])
                 {
                     generarNombreArchivo("DUALISMO_espejar-vertical_", imagen, nombre_salida);
                     espejar_vertical(archEntrada, nombre_salida, &header, matriz);
-                    rewind(archEntrada);
                     flagFunciones[5] = 1;
                 }
 
@@ -127,7 +123,6 @@ int procesar_imagen (int argc, char* argv[])
                 {
                     generarNombreArchivo("DUALISMO_rotar-derecha_", imagen, nombre_salida);
                     rotar(archEntrada, nombre_salida, &header, matriz, DERECHA);
-                    rewind(archEntrada);
                     flagFunciones[6] = 1;
                 }
 
@@ -135,7 +130,6 @@ int procesar_imagen (int argc, char* argv[])
                 {
                     generarNombreArchivo("DUALISMO_rotar-izquierda_", imagen, nombre_salida);
                     rotar(archEntrada, nombre_salida, &header, matriz, IZQUIERDA);
-                    rewind(archEntrada);
                     flagFunciones[7] = 1;
                 }
 
@@ -143,7 +137,6 @@ int procesar_imagen (int argc, char* argv[])
                 {
                     generarNombreArchivo("DUALISMO_aumentar-contraste_", imagen,nombre_salida);
                     aumentar_contraste(archEntrada, nombre_salida, &header, matriz, porcentaje);
-                    rewind(archEntrada);
                     flagFunciones[8] = 1;
                 }
 
@@ -151,7 +144,6 @@ int procesar_imagen (int argc, char* argv[])
                 {
                     generarNombreArchivo("DUALISMO_reducir-contraste_", imagen,nombre_salida);
                     reducir_contraste(archEntrada, nombre_salida, &header, matriz, porcentaje);
-                    rewind(archEntrada);
                     flagFunciones[9] = 1;
                 }
 
@@ -159,7 +151,6 @@ int procesar_imagen (int argc, char* argv[])
                 {
                     generarNombreArchivo("DUALISMO_tonalidad-azul_", imagen,nombre_salida);
                     tonalidad_azul(archEntrada, nombre_salida, &header, matriz, porcentaje);
-                    rewind(archEntrada);
                     flagFunciones[10] = 1;
                 }
 
@@ -167,14 +158,12 @@ int procesar_imagen (int argc, char* argv[])
                 {
                     generarNombreArchivo("DUALISMO_tonalidad-verde_", imagen,nombre_salida);
                     tonalidad_verde(archEntrada, nombre_salida, &header, matriz, porcentaje);
-                    rewind(archEntrada);
                     flagFunciones[11] = 1;
                 }
                 else if(strncmp(opcion, "--tonalidad-roja", strlen("--tonalidad-roja")) == 0 && flagFunciones[12] != 1 && porcentaje!=-1 )
                 {
                     generarNombreArchivo("DUALISMO_tonalidad-roja_", imagen,nombre_salida);
                     tonalidad_roja(archEntrada, nombre_salida, &header, matriz, porcentaje);
-                    rewind(archEntrada);
                     flagFunciones[12] = 1;
                 }
 
@@ -182,7 +171,6 @@ int procesar_imagen (int argc, char* argv[])
                 {
                     generarNombreArchivo("DUALISMO_recortar_", imagen,nombre_salida);
                     recortar(archEntrada, nombre_salida, &header, matriz, porcentaje);
-                    rewind(archEntrada);
                     flagFunciones[13] = 1;
                 }
 
@@ -190,7 +178,6 @@ int procesar_imagen (int argc, char* argv[])
                 {
                     generarNombreArchivo("DUALISMO_achicar_", imagen,nombre_salida);
                     achicar(archEntrada,nombre_salida,&header,matriz,porcentaje);
-                    rewind(archEntrada);
                     flagFunciones[14] = 1;
                 }
 
@@ -198,7 +185,6 @@ int procesar_imagen (int argc, char* argv[])
                 {
                     generarNombreArchivo("DUALISMO_concatenar-vertical_", imagen,nombre_salida);
                     concatenar_vertical(archEntrada, archEntrada2, nombre_salida, &header, &header2, matriz, matriz2);
-                    rewind(archEntrada);
                     flagFunciones[15] = 1;
                 }
 
@@ -206,8 +192,14 @@ int procesar_imagen (int argc, char* argv[])
                 {
                     generarNombreArchivo("DUALISMO_concatenar-horizontal_", imagen,nombre_salida);
                     concatenar_horizontal(archEntrada, archEntrada2, nombre_salida, &header, &header2, matriz, matriz2);
-                    rewind(archEntrada);
                     flagFunciones[16] = 1;
+                }
+
+                else if(strncmp(opcion, "--comodin", strlen("--comodin")) == 0 && flagFunciones[17] != 1)
+                {
+                    generarNombreArchivo("DUALISMO_comodin_", imagen, nombre_salida);
+                    comodin_efecto_VHS(archEntrada, nombre_salida, &header, matriz);
+                    flagFunciones[17] = 1;
                 }
 
                 else
@@ -339,12 +331,15 @@ void guardarMatrizArchivo (t_pixel ** matriz, int filas, int col, int padding, F
 void copiar_bytes (FILE * origen, FILE * dest, int offsetDatos)
 {
     char byte;
+    long posInicial = ftell(origen);
 
     for(int i = 0; i < offsetDatos; i++)
     {
         fread(&byte, sizeof(char), 1, origen);
         fwrite(&byte, sizeof(char), 1, dest);
     }
+
+    fseek(origen, posInicial, SEEK_SET);
 }
 
 void generarNombreArchivo (const char * prefijo, const char * nombreArch, char * resultado)
@@ -450,13 +445,10 @@ void copiar_header(t_header* original, t_header* nuevo)
     nuevo->tamImagen = original->tamImagen;
 }
 
-t_pixel** copiarMatriz (t_pixel** matOriginal, int filas, int col)
+void copiarMatriz (t_pixel** matOriginal, t_pixel** matCopia, int filas, int col)
 {
-    t_pixel ** copia = crearMatriz(filas, col);
     for(int i = 0; i < filas; i++)
     {
-        memcpy(copia[i], matOriginal[i], col * sizeof(t_pixel));
+        memcpy(matCopia[i], matOriginal[i], col * sizeof(t_pixel));
     }
-
-    return copia;
 }

@@ -13,7 +13,7 @@ bool comodin_efecto_VHS (FILE * pf_origen, const char * dest, t_header * header,
     cargarMatriz(pf_origen, matriz, header);
 
     t_pixel ** matriz_VHS = crearMatriz(header->alto, header->ancho);
-    cargarMatriz(pf_origen, matriz_VHS, header);
+    copiarMatriz(matriz, matriz_VHS, header->alto, header->ancho);
 
     /// Primer paso efecto cromatico
     int offset_croma = 3;
@@ -34,7 +34,7 @@ bool comodin_efecto_VHS (FILE * pf_origen, const char * dest, t_header * header,
             }
         }
     }
-    copiarMatriz(matriz_VHS, matriz, header->alto, header->ancho);
+    copiarMatriz(matriz, matriz_VHS, header->alto, header->ancho);
 
     /// Segundo paso barrido de cinta
 
@@ -86,12 +86,4 @@ bool comodin_efecto_VHS (FILE * pf_origen, const char * dest, t_header * header,
 
     fclose(pf_dest);
     return true;
-}
-
-void copiarMatriz(t_pixel **origen, t_pixel **destino, int alto, int ancho) {
-    for (int i = 0; i < alto; i++) {
-        for (int j = 0; j < ancho; j++) {
-            destino[i][j] = origen[i][j];
-        }
-    }
 }

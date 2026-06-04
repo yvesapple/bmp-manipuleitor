@@ -9,7 +9,8 @@ bool negativo (FILE * pf_origen, const char * dest, t_header * header, t_pixel *
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
 
-    t_pixel ** matriz = copiarMatriz(matrizOriginal, header->alto, header->ancho);
+    t_pixel ** matriz = crearMatriz(header->alto, header->ancho);
+    copiarMatriz(matrizOriginal, matriz, header->alto, header->ancho);
 
     for(int i = 0; i < header->alto; i++)
     {
@@ -36,7 +37,8 @@ bool escala_de_grises (FILE * pf_origen, const char * dest, t_header * header, t
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
 
-    t_pixel ** matriz = copiarMatriz(matrizOriginal, header->alto, header->ancho);
+    t_pixel ** matriz = crearMatriz(header->alto, header->ancho);
+    copiarMatriz(matrizOriginal, matriz, header->alto, header->ancho);
 
     char gris;
 
