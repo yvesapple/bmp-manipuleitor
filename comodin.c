@@ -34,7 +34,7 @@ bool comodin_efecto_VHS (FILE * pf_origen, const char * dest, t_header * header,
             }
         }
     }
-    copiarMatriz(matriz, matriz_VHS, header->alto, header->ancho);
+    copiarMatriz(matriz_VHS, matriz, header->alto, header->ancho);
 
     /// Segundo paso barrido de cinta
 
