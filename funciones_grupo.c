@@ -42,6 +42,7 @@ int procesar_imagen (int argc, char* argv[])
         return ERROR_ARCHIVO;
     cargar_header(archEntrada, &header);
     t_pixel **matriz = crearMatriz(header.alto, header.ancho);
+    cargarMatriz(archEntrada, matriz, &header);
 
     t_header header2;
     const char * imagen2 = NULL;
@@ -55,17 +56,18 @@ int procesar_imagen (int argc, char* argv[])
             return ERROR_ARCHIVO;
         cargar_header(archEntrada2, &header2);
         matriz2 = crearMatriz(header2.alto, header2.ancho);
+        cargarMatriz(archEntrada2, matriz2, &header2);
     }
 
     int flagFunciones[18]= {0};
-    int filtros_hallados = argc - cantBMP;
+    // int filtros_hallados = argc - cantBMP;
 
-    for(int i = 1; i < (filtros_hallados); i++)   // argv[0] es el nombre del programa
+    for(int i = 1; i < argc; i++)   // argv[0] es el nombre del programa
     {
         const char * opcion = argv[i];
         bool filtroValido = true;
 
-        if((strcmp(opcion, imagen) != 0))
+        if((strcmp(opcion, imagen) != 0) && (cantBMP < 2 || strcmp(opcion, imagen2) != 0))
         {
             porcentaje=buscarPorcentaje(opcion); // por cada nueva pasada se busca porcentaje
 
@@ -137,46 +139,41 @@ int procesar_imagen (int argc, char* argv[])
                     flagFunciones[7] = 1;
                 }
 
-
-
-                else if(strncmp(opcion, "--aumentar-contraste", strlen("--aumentar-contraste")) == 0 && flagFunciones[8] != 1 && porcentaje!=-1 )
+                else if(strncmp(opcion, "--aumentar-contraste", strlen("--aumentar-contraste")) == 0 && flagFunciones[8] != 1 && porcentaje !=-1 )
                 {
                     generarNombreArchivo("DUALISMO_aumentar-contraste_", imagen,nombre_salida);
-                    aumentar_contraste(imagen,nombre_salida,&header,porcentaje);
+                    aumentar_contraste(archEntrada, nombre_salida, &header, matriz, porcentaje);
                     rewind(archEntrada);
                     flagFunciones[8] = 1;
                 }
 
-
-                else if(strncmp(opcion, "--reducir-contraste", strlen("--reducir-contraste")) == 0 && flagFunciones[9] != 1 && porcentaje!=-1 )
+                else if(strncmp(opcion, "--reducir-contraste", strlen("--reducir-contraste")) == 0 && flagFunciones[9] != 1 && porcentaje !=-1 )
                 {
                     generarNombreArchivo("DUALISMO_reducir-contraste_", imagen,nombre_salida);
-                    reducir_contraste(imagen,nombre_salida,&header,porcentaje);
+                    reducir_contraste(archEntrada, nombre_salida, &header, matriz, porcentaje);
                     rewind(archEntrada);
                     flagFunciones[9] = 1;
                 }
 
-
-
-                else if(strncmp(opcion, "--tonalidad-azul", strlen("--tonalidad-azul")) == 0 && flagFunciones[10] != 1 && porcentaje!=-1 )
+                else if(strncmp(opcion, "--tonalidad-azul", strlen("--tonalidad-azul")) == 0 && flagFunciones[10] != 1 && porcentaje !=-1 )
                 {
                     generarNombreArchivo("DUALISMO_tonalidad-azul_", imagen,nombre_salida);
-                    tonalidad_azul(imagen,nombre_salida,&header,porcentaje);
+                    tonalidad_azul(archEntrada, nombre_salida, &header, matriz, porcentaje);
                     rewind(archEntrada);
                     flagFunciones[10] = 1;
                 }
 
-                else if(strncmp(opcion, "--tonalidad-verde", strlen("--tonalidad-verde")) == 0 && flagFunciones[11] != 1 && porcentaje!=-1 )
+                else if(strncmp(opcion, "--tonalidad-verde", strlen("--tonalidad-verde")) == 0 && flagFunciones[11] != 1 && porcentaje !=-1 )
                 {
                     generarNombreArchivo("DUALISMO_tonalidad-verde_", imagen,nombre_salida);
-                    tonalidad_verde(imagen,nombre_salida,&header,porcentaje);
+                    tonalidad_verde(archEntrada, nombre_salida, &header, matriz, porcentaje);
                     rewind(archEntrada);
                     flagFunciones[11] = 1;
                 }
-                else if(strncmp(opcion, "--tonalidad-rojo", strlen("--tonalidad-rojo")) == 0 && flagFunciones[12] != 1 && porcentaje!=-1 )
+                else if(strncmp(opcion, "--tonalidad-roja", strlen("--tonalidad-roja")) == 0 && flagFunciones[12] != 1 && porcentaje!=-1 )
                 {
-                    generarNombreArchivo("DUALISMO_tonalidad-rojo_", imagen,nombre_salida);
-                    tonalidad_rojo(imagen,nombre_salida,&header,porcentaje);
+                    generarNombreArchivo("DUALISMO_tonalidad-roja_", imagen,nombre_salida);
+                    tonalidad_roja(archEntrada, nombre_salida, &header, matriz, porcentaje);
                     rewind(archEntrada);
                     flagFunciones[12] = 1;
                 }
@@ -184,7 +181,7 @@ int procesar_imagen (int argc, char* argv[])
                 else if(strncmp(opcion, "--recortar", strlen("--recortar")) == 0 && flagFunciones[13] != 1 && porcentaje!=-1 )
                 {
                     generarNombreArchivo("DUALISMO_recortar_", imagen,nombre_salida);
-                    recortar(imagen,nombre_salida,&header,porcentaje);
+                    recortar(archEntrada, nombre_salida, &header, matriz, porcentaje);
                     rewind(archEntrada);
                     flagFunciones[13] = 1;
                 }
@@ -234,7 +231,10 @@ int procesar_imagen (int argc, char* argv[])
 
     liberarMatriz(matriz, header.alto);
     if(cantBMP == 2)
+    {
         liberarMatriz(matriz2, header2.alto);
+        fclose(archEntrada2);
+    }
     fclose(archEntrada);
 
     return EXITO;
@@ -383,17 +383,23 @@ int buscarPorcentaje (const char * parametro)
     char aux[4];        // 3 bytes (0-100) 1 byte (\0)
     const char * ptrCadena = strrchr(parametro, '=');
     if(!ptrCadena)
-        return ERROR_ARGUMENTOS;
+        return -1;
 
     ptrCadena++;        // Saltear '='
     strcpy(aux, ptrCadena);
     aux[3] = '\0';
-    int porcentaje=0;
+    int porcentaje = 0;
     porcentaje = atoi(aux);
-    if(porcentaje <= 0 || porcentaje > 100)
+
+    int li = 0;
+
+    if(strncmp(parametro, "--recortar", strlen("--recortar")) == 0 || strncmp(parametro, "--achicar", strlen("--achicar")) == 0)
+        li = 1;
+
+    if(porcentaje < li || porcentaje > 100)
     {
-        printf("Valor incorrecto para el porcentaje, ingresar valor entre 0 y 100.\n");
-        return ERROR_ARGUMENTOS;
+        printf("Valor incorrecto para el porcentaje, ingresar valor entre %d y 100.\n", li);
+        return -1;
     }
 
     return porcentaje;
@@ -404,7 +410,10 @@ FILE* abrir_archivo (const char * path, const char * metodo)
     FILE * pf = fopen(path, metodo);
     if(!pf)
     {
-        printf("Sin permisos de lectura/escritura\n");
+        if(strcmp(metodo, "wb") == 0)
+            printf("Sin permisos de escritura\n");
+        else
+            printf("No existe la ruta de archivo: %s\n", path);
         return NULL;
     }
 
@@ -441,3 +450,13 @@ void copiar_header(t_header* original, t_header* nuevo)
     nuevo->tamImagen = original->tamImagen;
 }
 
+t_pixel** copiarMatriz (t_pixel** matOriginal, int filas, int col)
+{
+    t_pixel ** copia = crearMatriz(filas, col);
+    for(int i = 0; i < filas; i++)
+    {
+        memcpy(copia[i], matOriginal[i], col * sizeof(t_pixel));
+    }
+
+    return copia;
+}

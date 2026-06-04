@@ -13,7 +13,7 @@
  * @return true Si se completo el filtro.
  * @return false Si no tiene permisos de lectura y escritura.
  */
-bool negativo (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matriz);
+bool negativo (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matrizOriginal);
 /**
  * @brief Convierte una imagen a escala de grises promediando RGB
  * @param origen Ruta al archivo de la imagen.
@@ -23,7 +23,7 @@ bool negativo (FILE * pf_origen, const char * dest, t_header * header, t_pixel *
  * @return true Si se completo el filtro.
  * @return false Si no tiene permisos de lectura y escritura.
  */
-bool escala_de_grises (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matriz);
+bool escala_de_grises (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matrizOriginal);
 
 /**
  * @brief Voltea una imagen dada horizontalmente
@@ -34,7 +34,7 @@ bool escala_de_grises (FILE * pf_origen, const char * dest, t_header * header, t
  * @return true Si se completo el filtro.
  * @return false Si no tiene permisos de lectura y escritura.
  */
-bool espejar_horizontal (FILE * pf_origen, const char * dest, t_header * header, t_pixel **matriz);
+bool espejar_horizontal (FILE * pf_origen, const char * dest, t_header * header, t_pixel **matrizOriginal);
 
 /**
  * @brief Voltea una imagen dada verticalmente
@@ -45,6 +45,6 @@ bool espejar_horizontal (FILE * pf_origen, const char * dest, t_header * header,
  * @return true Si se completo el filtro.
  * @return false Si no tiene permisos de lectura y escritura.
  */
-bool espejar_vertical (FILE * pf_origen, const char * dest, t_header * header, t_pixel **matriz);
+bool espejar_vertical (FILE * pf_origen, const char * dest, t_header * header, t_pixel **matrizOriginal);
 
 #endif // FILTROS_BASICOS_H_INCLUDED
