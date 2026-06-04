@@ -417,6 +417,9 @@ FILE* abrir_archivo (const char * path, const char * metodo)
 
 void cargarMatriz (FILE * pf, t_pixel ** mat, t_header * header)
 {
+    if(verbose)
+        printf("Leyendo datos de imagen...");
+        
     long posInicial = ftell(pf);
     fseek(pf, header->offsetDatos, SEEK_SET);
 

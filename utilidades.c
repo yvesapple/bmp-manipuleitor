@@ -72,9 +72,9 @@ void mostrar_comandos ()
     printf("BMPMANIPULEITOR - Manipulador de imágenes BMP 24 bits\n\n");
     puts("GRUPO: DUALISMO");
     puts("Integrantes:");
-    printf("\t1. 43.816.379 - AVALOS, Nahuel Agustin\n");
-    printf("\t1. 40.766.722	- CARO, Nicolas Dario\n");
-    printf("\t1. 40.239.700 - DEDO, Juan Pablo Lujan\n\n");
+    printf("\t1. 43816379 - AVALOS, Nahuel Agustin\n");
+    printf("\t1. 40766722	- CARO, Nicolas Dario\n");
+    printf("\t1. 40239700 - DEDO, Juan Pablo Lujan\n\n");
 
     printf("Uso: bmpmanipuleitor.exe [OPCIONES]\n\n");
     printf("EJEMPLOS:\n");
@@ -104,4 +104,6 @@ void mostrar_comandos ()
     printf("\nConcatenaciones\n");
     printf("\t--concatenar-horizontal: una al lado de la otra, primero la primer imagen.\n");
     printf("\t--concatenar-vertical: una arriba de la otra, primero la primer imagen.\n");
+
+    printf("\n--comodin: Aplica un filtro VHS a la imagen\n");
 }

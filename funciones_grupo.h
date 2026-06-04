@@ -1,3 +1,15 @@
+// Apellido: Avalos, Nahuel Agustín
+// DNI: 43816379
+// Entrega: Si
+
+// Apellido: Caro, Nicolas Dario
+// DNI: 40766722
+// Entrega: Si
+
+// Apellido: Dedo, Juan Pablo
+// DNI: 40239700
+// Entrega: Si
+
 #ifndef FUNCIONES_GRUPO_H_INCLUDED
 #define FUNCIONES_GRUPO_H_INCLUDED
 
