@@ -45,11 +45,13 @@ bool concatenar_vertical(FILE * pf_origen, FILE * pf_origen_2, const char * dest
 
     if(header->ancho >= header_2->ancho)
     {
-        iniciarConcatenacionVer(matriz, matriz_2, matriz_concatenada, header, header_2, &nuevo_header);
+        iniciarConcatenacionVer_grande(matriz, matriz_2, matriz_concatenada, header, header_2, &nuevo_header);
+        //iniciarConcatenacionVer(matriz, matriz_2, matriz_concatenada, header, header_2, &nuevo_header);
     }
     else
     {
-        iniciarConcatenacionVer(matriz_2, matriz, matriz_concatenada, header_2, header, &nuevo_header);
+        iniciarConcatenacionVer_chica(matriz, matriz_2, matriz_concatenada, header, header_2, &nuevo_header);
+        //iniciarConcatenacionVer(matriz_2, matriz, matriz_concatenada, header_2, header, &nuevo_header);
     }
 
     guardarMatrizArchivo(matriz_concatenada,nuevo_header.alto,nuevo_header.ancho, nuevo_header.padding, pf_dest);
@@ -57,7 +59,7 @@ bool concatenar_vertical(FILE * pf_origen, FILE * pf_origen_2, const char * dest
     return true;
 }
 
-void iniciarConcatenacionVer (t_pixel** mat_origen, t_pixel** mat_origen_2, t_pixel** mat_destino, t_header* header_origen, t_header* header_origen_2, t_header* header_destino)
+void iniciarConcatenacionVer_grande (t_pixel** mat_origen, t_pixel** mat_origen_2, t_pixel** mat_destino, t_header* header_origen, t_header* header_origen_2, t_header* header_destino)
 {
     unsigned int i, j, i_continuacion = 0, j_padding = 0;
     for (i = 0; i < header_origen->alto; i++)
@@ -77,8 +79,34 @@ void iniciarConcatenacionVer (t_pixel** mat_origen, t_pixel** mat_origen_2, t_pi
         for(j_padding = j; j_padding < header_destino->ancho; j_padding++)
         {
             mat_destino[i_continuacion][j_padding].r = 0;
-            mat_destino[i_continuacion][j_padding].g = 0;
+            mat_destino[i_continuacion][j_padding].g = 255;
             mat_destino[i_continuacion][j_padding].b = 0;
+        }
+    }
+}
+
+void iniciarConcatenacionVer_chica (t_pixel** mat_origen, t_pixel** mat_origen_2, t_pixel** mat_destino, t_header* header_origen, t_header* header_origen_2, t_header* header_destino)
+{
+    unsigned int i, j, i_continuacion = 0, j_padding = 0;
+    for(i = 0; i < header_origen->alto; i++)
+    {
+        for (j = 0; j < header_origen->ancho; j++)
+        {
+            mat_destino[i][j] = mat_origen[i][j];
+        }
+        for(j_padding = j; j_padding < header_destino->ancho; j_padding++)
+        {
+            mat_destino[i][j_padding].r = 0;
+            mat_destino[i][j_padding].g = 255;
+            mat_destino[i][j_padding].b = 0;
+        }
+    }
+    i_continuacion = i;
+    for (i = 0; i < header_origen_2->alto; i++, i_continuacion++)
+    {
+        for (j = 0; j < header_origen_2->ancho; j++)
+        {
+            mat_destino[i_continuacion][j] = mat_origen_2[i][j];
         }
     }
 }
