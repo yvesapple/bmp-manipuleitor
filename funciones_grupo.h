@@ -105,14 +105,15 @@ void guardarMatrizArchivo (t_pixel ** matriz, int filas, int col, int padding, F
 void copiar_bytes (FILE * origen, FILE * dest, int offsetDatos);
 
 /**
- * @brief Genera un cadena de caracteres concatenando otras dos.
+ * @brief Genera un cadena de caracteres con el prefijo + filtro + nombre del archivo.
  *
  * @param prefijo String con el que comienza la cadena.
+ * @param opcion String del filtro que se aplica.
  * @param nombreArch String con el que finaliza la cadena.
  * @param resultado String en donde se guarda la concatenacion.
  */
 
-void generarNombreArchivo (const char * prefijo, const char * nombreArch, char * resultado, int porcentaje);
+void generarNombreArchivo (const char * prefijo, const char * nombreArch, const char * opcion, char * resultado, int porcentaje);
 
 void limpiarNombreArchivo(char* cad_nombre);
 
