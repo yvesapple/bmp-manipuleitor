@@ -11,7 +11,7 @@ bool concatenar_vertical(FILE * pf_origen, FILE * pf_origen_2, const char * dest
     copiar_header(header, &nuevo_header);
 
     nuevo_header.alto = header->alto + header_2->alto;
-    if(header->ancho >= header_2->ancho) // primera imagen mas ancha que segunda imagen�
+    if(header->ancho >= header_2->ancho) // primera imagen mas ancha que segunda imagen
     {
         nuevo_header.ancho = header->ancho;
     }
@@ -43,12 +43,10 @@ bool concatenar_vertical(FILE * pf_origen, FILE * pf_origen_2, const char * dest
     if(header->ancho >= header_2->ancho)
     {
         iniciarConcatenacionVer_grande(matriz, matriz_2, matriz_concatenada, header, header_2, &nuevo_header);
-        //iniciarConcatenacionVer(matriz, matriz_2, matriz_concatenada, header, header_2, &nuevo_header);
     }
     else
     {
         iniciarConcatenacionVer_chica(matriz, matriz_2, matriz_concatenada, header, header_2, &nuevo_header);
-        //iniciarConcatenacionVer(matriz_2, matriz, matriz_concatenada, header_2, header, &nuevo_header);
     }
 
     guardarMatrizArchivo(matriz_concatenada,nuevo_header.alto,nuevo_header.ancho, nuevo_header.padding, pf_dest);
@@ -152,11 +150,11 @@ bool concatenar_horizontal(FILE * pf_origen, FILE * pf_origen_2, const char * de
 
     if(header->alto >= header_2->alto)
     {
-        iniciarConcatenacionHor(matriz, matriz_2, matriz_concatenada, header, header_2);
+        iniciarConcatenacionHor_grande(matriz, matriz_2, matriz_concatenada, header, header_2);
     }
     else
     {
-        iniciarConcatenacionHor(matriz_2, matriz, matriz_concatenada, header_2, header);
+        iniciarConcatenacionHor_chica(matriz, matriz_2, matriz_concatenada, header, header_2);
     }
 
     guardarMatrizArchivo(matriz_concatenada,nuevo_header.alto,nuevo_header.ancho, nuevo_header.padding, pf_dest);
@@ -164,7 +162,7 @@ bool concatenar_horizontal(FILE * pf_origen, FILE * pf_origen_2, const char * de
     return true;
 }
 
-void iniciarConcatenacionHor (t_pixel** mat_origen, t_pixel** mat_origen_2, t_pixel** mat_destino, t_header* header_origen, t_header* header_origen_2)
+void iniciarConcatenacionHor_grande (t_pixel** mat_origen, t_pixel** mat_origen_2, t_pixel** mat_destino, t_header* header_origen, t_header* header_origen_2)
 {
     unsigned int i, j, i_padding = 0, j_continuacion = 0;
     for (i = 0; i < header_origen_2->alto; i++)
@@ -189,9 +187,41 @@ void iniciarConcatenacionHor (t_pixel** mat_origen, t_pixel** mat_origen_2, t_pi
         for(j = 0; j < header_origen_2->ancho; j++, j_continuacion++)
         {
             mat_destino[i_padding][j_continuacion].r=0;
-            mat_destino[i_padding][j_continuacion].g=0;
+            mat_destino[i_padding][j_continuacion].g=250;
             mat_destino[i_padding][j_continuacion].b=0;
         }
     }
 }
+
+void iniciarConcatenacionHor_chica (t_pixel** mat_origen, t_pixel** mat_origen_2, t_pixel** mat_destino, t_header* header_origen, t_header* header_origen_2)
+{
+    unsigned int i, j, i_padding = 0, j_continuacion = 0;
+    for (i = 0; i < header_origen->alto; i++)
+    {
+        for (j = 0; j < header_origen->ancho; j++)
+        {
+            mat_destino[i][j] = mat_origen[i][j];
+        }
+        j_continuacion = j;
+        for (j = 0; j < header_origen_2->ancho; j++, j_continuacion++)
+        {
+            mat_destino[i][j_continuacion] = mat_origen_2[i][j];
+        }
+    }
+    for (i_padding = i; i_padding < header_origen_2->alto; i_padding++)
+    {
+        for (j = 0; j < header_origen->ancho; j++)
+        {
+            mat_destino[i_padding][j].r=0;
+            mat_destino[i_padding][j].g=250;
+            mat_destino[i_padding][j].b=0;
+        }
+        j_continuacion = j;
+        for(j = 0; j < header_origen_2->ancho; j++, j_continuacion++)
+        {
+            mat_destino[i_padding][j_continuacion]=mat_origen_2[i_padding][j];
+        }
+    }
+}
+
 
