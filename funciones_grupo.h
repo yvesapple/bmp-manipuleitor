@@ -1,3 +1,15 @@
+// Apellido: Avalos, Nahuel Agustin
+// DNI: 43816379
+// Entrega: Si
+
+// Apellido: Caro, Nicolas Dario
+// DNI: 40766722
+// Entrega: Si
+
+// Apellido: Dedo, Juan Pablo Lujan
+// DNI: 40239700
+// Entrega: Si
+
 #ifndef FUNCIONES_GRUPO_H_INCLUDED
 #define FUNCIONES_GRUPO_H_INCLUDED
 
@@ -17,7 +29,8 @@
 
 extern bool verbose;
 
-typedef enum {
+typedef enum
+{
     EXITO = 0,
     ERROR_ARGUMENTOS = 1,
     ERROR_ARCHIVO = 2,

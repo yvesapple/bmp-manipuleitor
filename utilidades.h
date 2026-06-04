@@ -6,7 +6,8 @@
 #define MAX_BMP 2
 #define BYTES_X_PIXEL 3
 
-typedef struct {
+typedef struct
+{
     unsigned int tamArchivo;
     unsigned int offsetDatos;
     unsigned int ancho;
@@ -18,7 +19,8 @@ typedef struct {
     char firma[2];
 } t_header;
 
-typedef struct {
+typedef struct
+{
     unsigned char b;
     unsigned char g;
     unsigned char r;

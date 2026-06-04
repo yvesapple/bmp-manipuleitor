@@ -119,7 +119,7 @@ bool concatenar_horizontal(FILE * pf_origen, FILE * pf_origen_2, const char * de
     cargarMatriz(pf_origen_2, matriz_2, header_2);
 
     nuevo_header.ancho = header->ancho + header_2->ancho;
-    if(header->alto >= header_2->alto) // primera imagen mas ancha que segunda imagen�
+    if(header->alto >= header_2->alto) // primera imagen mas ancha que segunda imagen
     {
         nuevo_header.alto = header->alto;
     }

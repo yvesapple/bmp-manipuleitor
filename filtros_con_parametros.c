@@ -190,7 +190,7 @@ bool recortar (FILE * pf_origen, const char * dest, t_header * header, t_pixel *
     // Vuelvo al offset
     fseek(pf_dest, header->offsetDatos, SEEK_SET);
 
-    guardarMatrizArchivo(matrizOriginal ,nuevo_header.alto, nuevo_header.ancho, nuevo_header.padding, pf_dest);
+    guardarMatrizArchivo(matrizOriginal,nuevo_header.alto, nuevo_header.ancho, nuevo_header.padding, pf_dest);
 
     fclose(pf_dest);
     return true;
