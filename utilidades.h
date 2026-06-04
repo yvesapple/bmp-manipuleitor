@@ -31,9 +31,6 @@ typedef struct
  *
  * @param nombreArch Ruta del archivo.
  * @param header Estructura a cargar.
- *
- * @return true Si pudo cargar la informacion.
- * @return false Si no pudo abrir el archivo.
  */
 void cargar_header (FILE * pf, t_header * header);
 
