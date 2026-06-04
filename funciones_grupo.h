@@ -1,15 +1,3 @@
-// Apellido: Avalos, Nahuel Agustín
-// DNI: 43816379
-// Entrega: Si
-
-// Apellido: Caro, Nicolas Dario
-// DNI: 40766722
-// Entrega: Si
-
-// Apellido: Dedo, Juan Pablo
-// DNI: 40239700
-// Entrega: Si
-
 #ifndef FUNCIONES_GRUPO_H_INCLUDED
 #define FUNCIONES_GRUPO_H_INCLUDED
 
@@ -110,7 +98,10 @@ void copiar_bytes (FILE * origen, FILE * dest, int offsetDatos);
  * @param nombreArch String con el que finaliza la cadena.
  * @param resultado String en donde se guarda la concatenacion.
  */
-void generarNombreArchivo (const char * prefijo, const char * nombreArch, char * resultado);
+
+void generarNombreArchivo (const char * prefijo, const char * nombreArch, char * resultado, int porcentaje);
+
+void limpiarNombreArchivo(char* cad_nombre);
 
 bool esParametroUtilidad (const char * opcion);
 
