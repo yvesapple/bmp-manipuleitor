@@ -109,7 +109,7 @@ int procesar_imagen (int argc, char* argv[])
         char prefijo[] = "DUALISMO";
         const char * opcion = argv[i];
         bool filtroValido = true;
-        bool resultado;
+        bool resultado = false;
 
         if((strcmp(opcion, imagen) != 0) && (cantBMP < 2 || strcmp(opcion, imagen2) != 0))
         {
@@ -134,7 +134,18 @@ int procesar_imagen (int argc, char* argv[])
                 generarNombreArchivo(prefijo, imagen, opcion, nombre_salida, porcentaje);
 
                 if(!validar_bmp(&header))
+                {
+                    liberarMatriz(matriz, header.alto);
+                    liberarMatriz(matrizCopia, header.alto);
+                    fclose(archEntrada);
+
+                    if(bmpEncontrados == 2)
+                    {
+                        liberarMatriz(matriz2, header2.alto);
+                        fclose(archEntrada2);
+                    }
                     return BMP_INVALIDO;
+                }
 
                 if(strcmp(opcion, "--negativo") == 0 && flagFunciones[2] != 1)
                 {
