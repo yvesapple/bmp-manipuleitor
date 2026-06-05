@@ -38,7 +38,7 @@ bool comando_validar (t_header * header)
 
     if(header->bits != 24)
     {
-        printf("ERROR: Profundidad de color incorrecta (%hu bits, esperado 24 bits\n)", header->bits);
+        printf("ERROR: Profundidad de color incorrecta (%hu bits, esperado 24 bits)\n", header->bits);
         return false;
     }
 
