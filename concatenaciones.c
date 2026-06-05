@@ -51,6 +51,8 @@ bool concatenar_vertical(FILE * pf_origen, FILE * pf_origen_2, const char * dest
 
     guardarMatrizArchivo(matriz_concatenada,nuevo_header.alto,nuevo_header.ancho, nuevo_header.padding, pf_dest);
     liberarMatriz(matriz_concatenada,nuevo_header.alto);
+
+    fclose(pf_dest);
     return true;
 }
 
@@ -159,6 +161,8 @@ bool concatenar_horizontal(FILE * pf_origen, FILE * pf_origen_2, const char * de
 
     guardarMatrizArchivo(matriz_concatenada,nuevo_header.alto,nuevo_header.ancho, nuevo_header.padding, pf_dest);
     liberarMatriz(matriz_concatenada,nuevo_header.alto);
+
+    fclose(pf_dest);
     return true;
 }
 
