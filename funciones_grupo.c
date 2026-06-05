@@ -309,7 +309,7 @@ void liberarMatriz (t_pixel** mat, int filas)
 
 void guardarMatrizArchivo (t_pixel ** matriz, int filas, int col, int padding, FILE * pf)
 {
-    unsigned char pad[3] = {0, 255, 0};
+    unsigned char pad[3] = {0, 0, 0};
 
     for(int i = 0; i < filas; i++)
     {
