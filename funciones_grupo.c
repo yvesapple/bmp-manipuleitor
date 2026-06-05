@@ -330,7 +330,7 @@ bool validar_bmp (t_header * header)
             printf("[INFO] Archivo invalido\n");
     }
 
-    return true;
+    return valido;
 }
 
 t_pixel** crearMatriz (int filas, int col)
