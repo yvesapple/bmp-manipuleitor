@@ -43,6 +43,8 @@ int procesar_imagen (int argc, char* argv[])
         return ERROR_ARCHIVO;
     cargar_header(archEntrada, &header);
     t_pixel **matriz = crearMatriz(header.alto, header.ancho);
+    if(!matriz)
+        return ERROR_MEMORIA;
     cargarMatriz(archEntrada, matriz, &header);
 
     t_header header2;
@@ -61,13 +63,33 @@ int procesar_imagen (int argc, char* argv[])
         }
         cargar_header(archEntrada2, &header2);
         matriz2 = crearMatriz(header2.alto, header2.ancho);
+        if(!matriz2)
+        {
+            fclose(archEntrada);
+            liberarMatriz(matriz, header.alto);
+            return ERROR_MEMORIA;
+        }
         cargarMatriz(archEntrada2, matriz2, &header2);
     }
 
-    int flagFunciones[18]= {0};
-    // int filtros_hallados = argc - cantBMP;
+    t_pixel ** matrizCopia = crearMatriz(header.alto, header.ancho);
+    if(!matrizCopia)
+    {
+        liberarMatriz(matriz, header.alto);
+        fclose(archEntrada);
 
-    for(int i = 1; i < argc; i++)   // argv[0] es el nombre del programa
+        if(cantBMP == 2)
+        {
+            liberarMatriz(matriz2, header2.alto);
+            fclose(archEntrada2);
+        }
+
+        return ERROR_MEMORIA;
+    }
+
+    int flagFunciones[18]= {0};
+
+    for(int i = 1; i < argc; i++)       // argv[0] es el nombre del programa
     {
         char prefijo[] = "DUALISMO";
         const char * opcion = argv[i];
@@ -75,9 +97,6 @@ int procesar_imagen (int argc, char* argv[])
 
         if((strcmp(opcion, imagen) != 0) && (cantBMP < 2 || strcmp(opcion, imagen2) != 0))
         {
-            porcentaje=buscarPorcentaje(opcion); // por cada nueva pasada se busca porcentaje
-            generarNombreArchivo(prefijo, imagen, opcion, nombre_salida, porcentaje);
-
             if(strncmp(opcion, "--validar", strlen("--validar")) == 0 && flagFunciones[0] != 1)
             {
                 printf("Validando %s...", imagen);
@@ -95,30 +114,35 @@ int procesar_imagen (int argc, char* argv[])
 
             else
             {
+                porcentaje=buscarPorcentaje(opcion); // por cada nueva pasada se busca porcentaje
+                generarNombreArchivo(prefijo, imagen, opcion, nombre_salida, porcentaje);
+
                 if(!validar_bmp(&header))
                     return BMP_INVALIDO;
 
                 if(strcmp(opcion, "--negativo") == 0 && flagFunciones[2] != 1)
                 {
-                    negativo(archEntrada, nombre_salida, &header, matriz);
+                    copiarMatriz(matriz, matrizCopia, header.alto, header.ancho);
+                    negativo(archEntrada, nombre_salida, &header, matrizCopia);
                     flagFunciones[2] = 1;
                 }
 
                 else if(strcmp(opcion, "--escala-de-grises") == 0 && flagFunciones[3] != 1)
                 {
-                    escala_de_grises(archEntrada, nombre_salida, &header, matriz);
+                    copiarMatriz(matriz, matrizCopia, header.alto, header.ancho);
+                    escala_de_grises(archEntrada, nombre_salida, &header, matrizCopia);
                     flagFunciones[3] = 1;
                 }
 
                 else if(strcmp(opcion, "--espejar-horizontal") == 0 && flagFunciones[4] != 1)
                 {
-                    espejar_horizontal(archEntrada, nombre_salida, &header, matriz);
+                    espejar_horizontal(archEntrada, nombre_salida, &header, matriz, matrizCopia);
                     flagFunciones[4] = 1;
                 }
 
                 else if(strcmp(opcion, "--espejar-vertical") == 0 && flagFunciones[5] != 1)
                 {
-                    espejar_vertical(archEntrada, nombre_salida, &header, matriz);
+                    espejar_vertical(archEntrada, nombre_salida, &header, matriz, matrizCopia);
                     flagFunciones[5] = 1;
                 }
 
@@ -136,30 +160,35 @@ int procesar_imagen (int argc, char* argv[])
 
                 else if(strncmp(opcion, "--aumentar-contraste", strlen("--aumentar-contraste")) == 0 && flagFunciones[8] != 1 && porcentaje !=-1 )
                 {
-                    aumentar_contraste(archEntrada, nombre_salida, &header, matriz, porcentaje);
+                    copiarMatriz(matriz, matrizCopia, header.alto, header.ancho);
+                    aumentar_contraste(archEntrada, nombre_salida, &header, matrizCopia, porcentaje);
                     flagFunciones[8] = 1;
                 }
 
                 else if(strncmp(opcion, "--reducir-contraste", strlen("--reducir-contraste")) == 0 && flagFunciones[9] != 1 && porcentaje !=-1 )
                 {
-                    reducir_contraste(archEntrada, nombre_salida, &header, matriz, porcentaje);
+                    copiarMatriz(matriz, matrizCopia, header.alto, header.ancho);
+                    reducir_contraste(archEntrada, nombre_salida, &header, matrizCopia, porcentaje);
                     flagFunciones[9] = 1;
                 }
 
                 else if(strncmp(opcion, "--tonalidad-azul", strlen("--tonalidad-azul")) == 0 && flagFunciones[10] != 1 && porcentaje !=-1 )
                 {
-                    tonalidad_azul(archEntrada, nombre_salida, &header, matriz, porcentaje);
+                    copiarMatriz(matriz, matrizCopia, header.alto, header.ancho);
+                    tonalidad_azul(archEntrada, nombre_salida, &header, matrizCopia, porcentaje);
                     flagFunciones[10] = 1;
                 }
 
                 else if(strncmp(opcion, "--tonalidad-verde", strlen("--tonalidad-verde")) == 0 && flagFunciones[11] != 1 && porcentaje !=-1 )
                 {
-                    tonalidad_verde(archEntrada, nombre_salida, &header, matriz, porcentaje);
+                    copiarMatriz(matriz, matrizCopia, header.alto, header.ancho);
+                    tonalidad_verde(archEntrada, nombre_salida, &header, matrizCopia, porcentaje);
                     flagFunciones[11] = 1;
                 }
                 else if(strncmp(opcion, "--tonalidad-roja", strlen("--tonalidad-roja")) == 0 && flagFunciones[12] != 1 && porcentaje!=-1 )
                 {
-                    tonalidad_roja(archEntrada, nombre_salida, &header, matriz, porcentaje);
+                    copiarMatriz(matriz, matrizCopia, header.alto, header.ancho);
+                    tonalidad_roja(archEntrada, nombre_salida, &header, matrizCopia, porcentaje);
                     flagFunciones[12] = 1;
                 }
 
@@ -189,7 +218,8 @@ int procesar_imagen (int argc, char* argv[])
 
                 else if(strcmp(opcion, "--comodin") == 0 && flagFunciones[17] != 1)
                 {
-                    comodin_efecto_VHS(archEntrada, nombre_salida, &header, matriz);
+                    copiarMatriz(matriz, matrizCopia, header.alto, header.ancho);
+                    comodin_efecto_VHS(archEntrada, nombre_salida, &header, matrizCopia);
                     flagFunciones[17] = 1;
                 }
 
@@ -215,6 +245,7 @@ int procesar_imagen (int argc, char* argv[])
     }
 
     liberarMatriz(matriz, header.alto);
+    liberarMatriz(matrizCopia, header.alto);
     if(cantBMP == 2)
     {
         liberarMatriz(matriz2, header2.alto);
@@ -247,16 +278,28 @@ int encontrarImagenes (char* argv[], char * bmpEncontrados[MAX_BMP])
 bool validar_bmp (t_header * header)
 {
     if(header->firma[0] != 'B' || header->firma[1] != 'M')
+    {
+        printf("Firma invalida.\n");
         return false;
+    }
 
     if(header->ancho < 1 || header->alto < 1)
+    {
+        printf("Dimensiones invalidas. Minimo: 1x1). Actual: %dx%d.\n", header->ancho, header->alto);
         return false;
+    }
 
     if(header->bits != 24)
+    {
+        printf("Profundidad de bits invalida. Requerida: 24 bits. Actual: %hu bits.\n", header->bits);
         return false;
+    }
 
     if(header->compresion != 0)
+    {
+        printf("Imagen comprimida.\n");
         return false;
+    }
 
     return true;
 }
@@ -270,7 +313,7 @@ t_pixel** crearMatriz (int filas, int col)
     if(!matriz)
     {
         printf("Error al asignar memoria\n");
-        exit(ERROR_MEMORIA);
+        return NULL;
     }
 
     for(int i = 0; i < filas; i++)
@@ -285,7 +328,7 @@ t_pixel** crearMatriz (int filas, int col)
             }
             free(matriz);
             printf("Error al asignar memoria\n");
-            exit(ERROR_MEMORIA);
+            return NULL;
         }
     }
 

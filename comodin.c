@@ -3,17 +3,33 @@
 
 bool comodin_efecto_VHS (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matriz)
 {
+    t_pixel ** matriz_VHS = crearMatriz(header->alto, header->ancho);
+    if(!matriz_VHS)
+        return false;
+
+    int altura_cinta = 20, offset = 0, j_destino;
+    unsigned int bandas = (unsigned int) (header->alto / altura_cinta);
+    unsigned int* mapa_desplazamiento = (unsigned int*) calloc(bandas, sizeof(unsigned int));
+    if(!mapa_desplazamiento)
+    {
+        puts("Falla al reservar memoria para mapa de desplazamiento.");
+        liberarMatriz(matriz_VHS, header->alto);
+        return false;
+    }
+
+    copiarMatriz(matriz, matriz_VHS, header->alto, header->ancho);
+
     FILE * pf_dest = abrir_archivo(dest, "wb");
     if(!pf_dest)
+    {
+        free(mapa_desplazamiento);
+        liberarMatriz(matriz_VHS, header->alto);
         return false;
+    }
 
     unsigned int i, j;
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
-    cargarMatriz(pf_origen, matriz, header);
-
-    t_pixel ** matriz_VHS = crearMatriz(header->alto, header->ancho);
-    copiarMatriz(matriz, matriz_VHS, header->alto, header->ancho);
 
     /// Primer paso efecto cromatico
     int offset_croma = 3;
@@ -37,16 +53,6 @@ bool comodin_efecto_VHS (FILE * pf_origen, const char * dest, t_header * header,
     copiarMatriz(matriz_VHS, matriz, header->alto, header->ancho);
 
     /// Segundo paso barrido de cinta
-
-    int altura_cinta = 20, offset = 0, j_destino;
-    unsigned int bandas = (unsigned int) (header->alto / altura_cinta);
-    unsigned int* mapa_desplazamiento = (unsigned int*) calloc(bandas, sizeof(unsigned int));
-    if(!mapa_desplazamiento)
-    {
-        puts("Falla al reservar memoria para mapa de desplazamiento.");
-        return false;
-    }
-
     for(i = 0; i < bandas; i++)
     {
         *(mapa_desplazamiento+i) = (rand() % 11) - 15;
