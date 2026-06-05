@@ -39,6 +39,11 @@ bool concatenar_vertical(FILE * pf_origen, FILE * pf_origen_2, const char * dest
     fseek(pf_dest, header->offsetDatos, SEEK_SET);
 
     t_pixel**  matriz_concatenada = crearMatriz(nuevo_header.alto, nuevo_header.ancho);
+    if(!matriz_concatenada)
+    {
+        fclose(pf_dest);
+        return false;
+    }
 
     if(header->ancho >= header_2->ancho)
     {
@@ -146,6 +151,11 @@ bool concatenar_horizontal(FILE * pf_origen, FILE * pf_origen_2, const char * de
     fseek(pf_dest, header->offsetDatos, SEEK_SET);
 
     t_pixel**  matriz_concatenada = crearMatriz(nuevo_header.alto, nuevo_header.ancho);
+    if(!matriz_concatenada)
+    {
+        fclose(pf_dest);
+        return false;
+    }
 
     if(header->alto >= header_2->alto)
     {
