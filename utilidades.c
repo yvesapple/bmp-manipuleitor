@@ -73,8 +73,8 @@ void mostrar_comandos ()
     puts("GRUPO: DUALISMO");
     puts("Integrantes:");
     printf("\t1. 43816379 - AVALOS, Nahuel Agustin\n");
-    printf("\t1. 40766722	- CARO, Nicolas Dario\n");
-    printf("\t1. 40239700 - DEDO, Juan Pablo Lujan\n\n");
+    printf("\t2. 40766722	- CARO, Nicolas Dario\n");
+    printf("\t3. 40239700 - DEDO, Juan Pablo Lujan\n\n");
 
     printf("Uso: bmpmanipuleitor.exe [OPCIONES]\n\n");
     printf("EJEMPLOS:\n");
