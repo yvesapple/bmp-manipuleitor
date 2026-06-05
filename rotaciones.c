@@ -51,6 +51,16 @@ bool rotar (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** m
     }
 
     int nuevoPadding = (4 - (nuevoAncho * 3) % 4) % 4;
+    int nuevoTamImagen = (nuevoAncho * BYTES_X_PIXEL + nuevoPadding) * nuevoAlto;
+    int nuevoTamArchivo = nuevoTamImagen + header->offsetDatos;
+
+    fseek(pf_dest, 2, SEEK_SET);
+    fwrite(&nuevoTamArchivo, sizeof(int), 1, pf_dest);
+ 
+    fseek(pf_dest, 34, SEEK_SET);
+    fwrite(&nuevoTamImagen, sizeof(int), 1, pf_dest);
+ 
+    fseek(pf_dest, header->offsetDatos, SEEK_SET);
 
     guardarMatrizArchivo(matRotada, nuevoAlto, nuevoAncho, nuevoPadding, pf_dest);
 
