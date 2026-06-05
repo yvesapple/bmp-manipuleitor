@@ -1,16 +1,13 @@
 #include "filtros_basicos.h"
 #include "funciones_grupo.h"
 
-bool negativo (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matrizOriginal)
+bool negativo (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matriz)
 {
     FILE * pf_dest = abrir_archivo(dest, "wb");
     if(!pf_dest)
         return false;
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
-
-    t_pixel ** matriz = crearMatriz(header->alto, header->ancho);
-    copiarMatriz(matrizOriginal, matriz, header->alto, header->ancho);
 
     for(int i = 0; i < header->alto; i++)
     {
@@ -24,12 +21,11 @@ bool negativo (FILE * pf_origen, const char * dest, t_header * header, t_pixel *
 
     guardarMatrizArchivo(matriz, header->alto, header->ancho, header->padding, pf_dest);
 
-    liberarMatriz(matriz, header->alto);
     fclose(pf_dest);
     return true;
 }
 
-bool escala_de_grises (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matrizOriginal)
+bool escala_de_grises (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matriz)
 {
     FILE * pf_dest = abrir_archivo(dest, "wb");
     if(!pf_dest)
@@ -37,10 +33,7 @@ bool escala_de_grises (FILE * pf_origen, const char * dest, t_header * header, t
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
 
-    t_pixel ** matriz = crearMatriz(header->alto, header->ancho);
-    copiarMatriz(matrizOriginal, matriz, header->alto, header->ancho);
-
-    char gris;
+    unsigned char gris;
 
     for(int i = 0; i < header->alto; i++)
     {
@@ -55,20 +48,17 @@ bool escala_de_grises (FILE * pf_origen, const char * dest, t_header * header, t
 
     guardarMatrizArchivo(matriz, header->alto, header->ancho, header->padding, pf_dest);
 
-    liberarMatriz(matriz, header->alto);
     fclose(pf_dest);
     return true;
 }
 
-bool espejar_horizontal (FILE * pf_origen, const char * dest, t_header * header, t_pixel **matrizOriginal)
+bool espejar_horizontal (FILE * pf_origen, const char * dest, t_header * header, t_pixel **matrizOriginal, t_pixel **matriz)
 {
     FILE * pf_dest = abrir_archivo(dest, "wb");
     if(!pf_dest)
         return false;
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
-
-    t_pixel ** matriz = crearMatriz(header->alto, header->ancho);
 
     for(int i = 0; i < header->alto; i++)
     {
@@ -80,20 +70,17 @@ bool espejar_horizontal (FILE * pf_origen, const char * dest, t_header * header,
 
     guardarMatrizArchivo(matriz, header->alto, header->ancho, header->padding, pf_dest);
 
-    liberarMatriz(matriz, header->alto);
     fclose(pf_dest);
     return true;
 }
 
-bool espejar_vertical (FILE * pf_origen, const char * dest, t_header * header, t_pixel **matrizOriginal)
+bool espejar_vertical (FILE * pf_origen, const char * dest, t_header * header, t_pixel **matrizOriginal, t_pixel **matriz)
 {
     FILE * pf_dest = abrir_archivo(dest, "wb");
     if(!pf_dest)
         return false;
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
-
-    t_pixel ** matriz = crearMatriz(header->alto, header->ancho);
 
     for(int i = 0; i < header->alto; i++)
     {
@@ -105,7 +92,6 @@ bool espejar_vertical (FILE * pf_origen, const char * dest, t_header * header, t
 
     guardarMatrizArchivo(matriz, header->alto, header->ancho, header->padding, pf_dest);
 
-    liberarMatriz(matriz, header->alto);
     fclose(pf_dest);
     return true;
 }

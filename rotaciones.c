@@ -3,24 +3,30 @@
 
 bool rotar (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matOriginal, int metodo)
 {
+    int nuevoAncho = header->alto;
+    int nuevoAlto = header->ancho;
+
+    t_pixel **matRotada = crearMatriz(nuevoAlto, nuevoAncho);
+    if(!matRotada)
+        return false;
+
     FILE *pf_dest = abrir_archivo(dest, "wb");
     if(!pf_dest)
+    {
+        liberarMatriz(matRotada, nuevoAlto);
         return false;
+    }
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
 
     // Vuelvo para intercambiar alto y ancho
     fseek(pf_dest, 18, SEEK_SET);
-    int nuevoAncho = header->alto;
-    int nuevoAlto = header->ancho;
 
     fwrite(&nuevoAncho, sizeof(int), 1, pf_dest);
     fwrite(&nuevoAlto, sizeof(int), 1, pf_dest);
 
     // Vuelvo al offset
     fseek(pf_dest, header->offsetDatos, SEEK_SET);
-
-    t_pixel **matRotada = crearMatriz(nuevoAlto, nuevoAncho);
 
     // Cargo la matriz rotada
     if(metodo == IZQUIERDA)
@@ -49,7 +55,6 @@ bool rotar (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** m
     guardarMatrizArchivo(matRotada, nuevoAlto, nuevoAncho, nuevoPadding, pf_dest);
 
     liberarMatriz(matRotada, nuevoAlto);
-
     fclose(pf_dest);
     return true;
 }

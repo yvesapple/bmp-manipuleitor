@@ -1,7 +1,7 @@
 #include "funciones_grupo.h"
 #include "filtros_con_parametros.h"
 
-bool aumentar_contraste (FILE * pf_origen, const char * dest, t_header * header, t_pixel **matrizOriginal, const unsigned int porcentaje)
+bool aumentar_contraste (FILE * pf_origen, const char * dest, t_header * header, t_pixel **matriz, const unsigned int porcentaje)
 {
     FILE * pf_dest = fopen(dest, "wb");
     if(!pf_dest)
@@ -10,9 +10,6 @@ bool aumentar_contraste (FILE * pf_origen, const char * dest, t_header * header,
     int prom = 0;
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
-
-    t_pixel ** matriz = crearMatriz(header->alto, header->ancho);
-    copiarMatriz(matrizOriginal, matriz, header->alto, header->ancho);
 
     for(int i = 0; i < header->alto; i++)
     {
@@ -31,12 +28,11 @@ bool aumentar_contraste (FILE * pf_origen, const char * dest, t_header * header,
 
     guardarMatrizArchivo(matriz, header->alto, header->ancho, header->padding, pf_dest);
 
-    liberarMatriz(matriz, header->alto);
     fclose(pf_dest);
     return true;
 }
 
-bool reducir_contraste (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matOriginal, const unsigned int porcentaje)
+bool reducir_contraste (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matriz, const unsigned int porcentaje)
 {
     FILE * pf_dest = fopen(dest, "wb");
     if(!pf_dest)
@@ -45,9 +41,6 @@ bool reducir_contraste (FILE * pf_origen, const char * dest, t_header * header, 
     int prom=0;
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
-
-    t_pixel **matriz = crearMatriz(header->alto, header->ancho);
-    copiarMatriz(matOriginal, matriz, header->alto, header->ancho);
 
     for(int i = 0; i < header->alto; i++)
     {
@@ -66,21 +59,17 @@ bool reducir_contraste (FILE * pf_origen, const char * dest, t_header * header, 
 
     guardarMatrizArchivo(matriz, header->alto, header->ancho, header->padding, pf_dest);
 
-    liberarMatriz(matriz, header->alto);
     fclose(pf_dest);
     return true;
 }
 
-bool tonalidad_azul (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matrizOriginal, const unsigned int porcentaje)
+bool tonalidad_azul (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matriz, const unsigned int porcentaje)
 {
     FILE * pf_dest = fopen(dest, "wb");
     if(!pf_dest)
         return false;
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
-
-    t_pixel **matriz = crearMatriz(header->alto, header->ancho);
-    copiarMatriz(matrizOriginal, matriz, header->alto, header->ancho);
 
     int pixelAzul= 0;
     for(int i = 0; i < header->alto; i++)
@@ -94,21 +83,17 @@ bool tonalidad_azul (FILE * pf_origen, const char * dest, t_header * header, t_p
 
     guardarMatrizArchivo(matriz, header->alto, header->ancho, header->padding, pf_dest);
 
-    liberarMatriz(matriz, header->alto);
     fclose(pf_dest);
     return true;
 }
 
-bool tonalidad_verde (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matrizOriginal, const unsigned int porcentaje)
+bool tonalidad_verde (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matriz, const unsigned int porcentaje)
 {
     FILE * pf_dest = fopen(dest, "wb");
     if(!pf_dest)
         return false;
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
-
-    t_pixel **matriz = crearMatriz(header->alto, header->ancho);
-    copiarMatriz(matrizOriginal, matriz, header->alto, header->ancho);
 
     int pixelVerde= 0;
     for(int i = 0; i < header->alto; i++)
@@ -122,12 +107,11 @@ bool tonalidad_verde (FILE * pf_origen, const char * dest, t_header * header, t_
 
     guardarMatrizArchivo(matriz, header->alto, header->ancho, header->padding, pf_dest);
 
-    liberarMatriz(matriz, header->alto);
     fclose(pf_dest);
     return true;
 }
 
-bool tonalidad_roja (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matrizOriginal, const unsigned int porcentaje)
+bool tonalidad_roja (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matriz, const unsigned int porcentaje)
 {
     FILE * pf_dest = fopen(dest, "wb");
     if(!pf_dest)
@@ -136,9 +120,6 @@ bool tonalidad_roja (FILE * pf_origen, const char * dest, t_header * header, t_p
 
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
-
-    t_pixel **matriz = crearMatriz(header->alto, header->ancho);
-    copiarMatriz(matrizOriginal, matriz, header->alto, header->ancho);
 
     int pixelRojo= 0;
     for(int i = 0; i < header->alto; i++)
@@ -152,17 +133,12 @@ bool tonalidad_roja (FILE * pf_origen, const char * dest, t_header * header, t_p
 
     guardarMatrizArchivo(matriz, header->alto, header->ancho, header->padding, pf_dest);
 
-    liberarMatriz(matriz, header->alto);
     fclose(pf_dest);
     return true;
 }
 
 bool recortar (FILE * pf_origen, const char * dest, t_header * header, t_pixel **matrizOriginal, const unsigned int porcentaje)
 {
-    FILE * pf_dest = fopen(dest, "wb");
-    if(!pf_dest)
-        return false;
-
     t_header nuevo_header;
     copiar_header(header,&nuevo_header);
 
@@ -171,6 +147,16 @@ bool recortar (FILE * pf_origen, const char * dest, t_header * header, t_pixel *
     nuevo_header.padding=(4 - (nuevo_header.ancho * BYTES_X_PIXEL) % 4) % 4;
     nuevo_header.tamImagen =(nuevo_header.ancho * BYTES_X_PIXEL + nuevo_header.padding) * nuevo_header.alto;
     nuevo_header.tamArchivo= (nuevo_header.tamImagen)+(nuevo_header.offsetDatos);
+
+    if(nuevo_header.ancho < 1 || nuevo_header.alto < 1)
+    {
+        printf("No se puede recortar mas la imagen.\n");
+        return false;
+    }
+
+    FILE * pf_dest = fopen(dest, "wb");
+    if(!pf_dest)
+        return false;
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
 
@@ -198,10 +184,6 @@ bool recortar (FILE * pf_origen, const char * dest, t_header * header, t_pixel *
 
 bool achicar (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matriz,const unsigned int porcentaje)
 {
-    FILE * pf_dest = abrir_archivo(dest, "wb");
-    if(!pf_dest)
-        return false;
-
     t_header nuevo_header;
     copiar_header(header, &nuevo_header);
 
@@ -210,6 +192,16 @@ bool achicar (FILE * pf_origen, const char * dest, t_header * header, t_pixel **
     nuevo_header.padding=(4 - (nuevo_header.ancho * BYTES_X_PIXEL) % 4) % 4;
     nuevo_header.tamImagen =(nuevo_header.ancho * BYTES_X_PIXEL + nuevo_header.padding) * nuevo_header.alto;
     nuevo_header.tamArchivo= (nuevo_header.tamImagen)+(nuevo_header.offsetDatos);
+
+    if(nuevo_header.alto < 1 || nuevo_header.ancho < 1)
+    {
+        printf("No se puede achicar mas la imagen.\n");
+        return false;
+    }
+
+    FILE * pf_dest = abrir_archivo(dest, "wb");
+    if(!pf_dest)
+        return false;
 
     t_pixel**  matriz_achicada = crearMatriz(nuevo_header.alto,nuevo_header.ancho);
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
