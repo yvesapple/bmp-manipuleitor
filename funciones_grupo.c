@@ -62,6 +62,15 @@ int procesar_imagen (int argc, char* argv[])
             return ERROR_ARCHIVO;
         }
         cargar_header(archEntrada2, &header2);
+        if(!validar_bmp(&header2))
+        {
+            printf("Archivo %s invalido para concatenar.\n", imagen2);
+            fclose(archEntrada);
+            liberarMatriz(matriz, header.alto);
+            fclose(archEntrada2);
+            return ERROR_ARCHIVO;
+        }
+
         matriz2 = crearMatriz(header2.alto, header2.ancho);
         if(!matriz2)
         {
