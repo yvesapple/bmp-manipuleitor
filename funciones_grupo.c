@@ -103,6 +103,7 @@ int procesar_imagen (int argc, char* argv[])
 
     int flagFunciones[18]= {0};
     int contador = 0;
+    bool bmpValidado = false;
 
     for(int i = 1; i < argc; i++)       // argv[0] es el nombre del programa
     {
@@ -133,18 +134,23 @@ int procesar_imagen (int argc, char* argv[])
                 porcentaje=buscarPorcentaje(opcion); // por cada nueva pasada se busca porcentaje
                 generarNombreArchivo(prefijo, imagen, opcion, nombre_salida, porcentaje);
 
-                if(!validar_bmp(&header))
+                if(bmpValidado == false)
                 {
-                    liberarMatriz(matriz, header.alto);
-                    liberarMatriz(matrizCopia, header.alto);
-                    fclose(archEntrada);
-
-                    if(cantBMP == 2)
+                    if(!validar_bmp(&header))
                     {
-                        liberarMatriz(matriz2, header2.alto);
-                        fclose(archEntrada2);
+                        liberarMatriz(matriz, header.alto);
+                        liberarMatriz(matrizCopia, header.alto);
+                        fclose(archEntrada);
+
+                        if(cantBMP == 2)
+                        {
+                            liberarMatriz(matriz2, header2.alto);
+                            fclose(archEntrada2);
+                        }
+                        return BMP_INVALIDO;
                     }
-                    return BMP_INVALIDO;
+
+                    bmpValidado = true;
                 }
 
                 if(strcmp(opcion, "--negativo") == 0 && flagFunciones[2] != 1)
