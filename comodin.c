@@ -1,5 +1,6 @@
 #include "comodin.h"
 #include "funciones_grupo.h"
+#include "time.h"
 
 bool comodin_efecto_VHS (FILE * pf_origen, const char * dest, t_header * header, t_pixel ** matriz)
 {
@@ -31,6 +32,7 @@ bool comodin_efecto_VHS (FILE * pf_origen, const char * dest, t_header * header,
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
 
+    srand(time(NULL));
     /// Primer paso efecto cromatico
     int offset_croma = 3;
     int j_destino_rojo = 0, j_destino_azul = 0;
