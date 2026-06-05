@@ -42,9 +42,13 @@ int procesar_imagen (int argc, char* argv[])
     if(!archEntrada)
         return ERROR_ARCHIVO;
     cargar_header(archEntrada, &header);
+
     t_pixel **matriz = crearMatriz(header.alto, header.ancho);
     if(!matriz)
+    {
+        fclose(archEntrada);
         return ERROR_MEMORIA;
+    }
     cargarMatriz(archEntrada, matriz, &header);
 
     t_header header2;
@@ -76,6 +80,7 @@ int procesar_imagen (int argc, char* argv[])
         {
             fclose(archEntrada);
             liberarMatriz(matriz, header.alto);
+            fclose(archEntrada2);
             return ERROR_MEMORIA;
         }
         cargarMatriz(archEntrada2, matriz2, &header2);
