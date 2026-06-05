@@ -261,8 +261,8 @@ int procesar_imagen (int argc, char* argv[])
 
                 if(verbose && filtroValido)
                 {
-                    char * nombreFiltro = strrchr(opcion, '-');
-                    nombreFiltro++;
+                    const char * nombreFiltro = opcion;
+                    nombreFiltro += 2;
 
                     if(resultado)
                     {
