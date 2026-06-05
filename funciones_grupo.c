@@ -54,7 +54,11 @@ int procesar_imagen (int argc, char* argv[])
         imagen2 = bmpEncontrados[1];
         archEntrada2 = abrir_archivo(imagen2, "rb");
         if(!archEntrada2)
+        {
+            fclose(archEntrada);
+            liberarMatriz(matriz, header.alto);
             return ERROR_ARCHIVO;
+        }
         cargar_header(archEntrada2, &header2);
         matriz2 = crearMatriz(header2.alto, header2.ancho);
         cargarMatriz(archEntrada2, matriz2, &header2);

@@ -82,6 +82,7 @@ bool comodin_efecto_VHS (FILE * pf_origen, const char * dest, t_header * header,
 
     guardarMatrizArchivo(matriz_VHS, header->alto, header->ancho, header->padding, pf_dest);
 
+    free(mapa_desplazamiento);
     liberarMatriz(matriz_VHS, header->alto);
 
     fclose(pf_dest);
