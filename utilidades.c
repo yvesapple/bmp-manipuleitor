@@ -70,11 +70,6 @@ void mostrar_info (t_header * header)
 void mostrar_comandos ()
 {
     printf("BMPMANIPULEITOR - Manipulador de imágenes BMP 24 bits\n\n");
-    puts("GRUPO: DUALISMO");
-    puts("Integrantes:");
-    printf("\t1. 43816379 - AVALOS, Nahuel Agustin\n");
-    printf("\t2. 40766722	- CARO, Nicolas Dario\n");
-    printf("\t3. 40239700 - DEDO, Juan Pablo Lujan\n\n");
 
     printf("Uso: bmpmanipuleitor.exe [OPCIONES]\n\n");
     printf("EJEMPLOS:\n");
