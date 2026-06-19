@@ -8,6 +8,22 @@ bool negativo (FILE * pf_origen, const char * dest, t_header * header, t_pixel *
         return false;
 
     copiar_bytes(pf_origen, pf_dest, header->offsetDatos);
+    // int prom = 0;
+
+    /*
+    for(int i = 0; i < header->alto; i++)
+    {
+        for(int j = 0; j < header->ancho; j++)
+        {
+            prom = 255 - matriz[i][j].r;
+            matriz[i][j].r = (unsigned char)(prom > 255 ? 255 : (prom < 0 ? 0 : prom));
+            prom = 255 - matriz[i][j].g;
+            matriz[i][j].g = (unsigned char)(prom > 255 ? 255 : (prom < 0 ? 0 : prom));
+            prom = 255 - matriz[i][j].b;
+            matriz[i][j].b = (unsigned char)(prom > 255 ? 255 : (prom < 0 ? 0 : prom));
+        }
+    }
+    */
 
     for(int i = 0; i < header->alto; i++)
     {
@@ -18,6 +34,7 @@ bool negativo (FILE * pf_origen, const char * dest, t_header * header, t_pixel *
             matriz[i][j].r = 255 - matriz[i][j].r;
         }
     }
+
 
     guardarMatrizArchivo(matriz, header->alto, header->ancho, header->padding, pf_dest);
 
